@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { FlattenedCode } from '@/types/codes';
+import { FlattenedCode, CodeType } from '@/types/codes';
 import { CodeResultItem } from './CodeResultItem';
+import { ICD10TreeView } from './ICD10TreeView';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { FileSearch } from 'lucide-react';
 
@@ -9,6 +10,7 @@ interface CodeResultsListProps {
   selectedCodes: Set<string>;
   onToggle: (code: string) => void;
   searchQuery: string;
+  codeTypeFilter: CodeType | 'all';
 }
 
 export function CodeResultsList({
@@ -16,10 +18,19 @@ export function CodeResultsList({
   selectedCodes,
   onToggle,
   searchQuery,
+  codeTypeFilter,
 }: CodeResultsListProps) {
+  // For ICD-10 only view, show hierarchical tree
+  const showHierarchy = codeTypeFilter === 'icd10cm';
+  
+  // For flat view (HCPCS or All), filter only HCPCS codes when in 'all' mode with hierarchy
+  const hcpcsCodes = useMemo(() => {
+    return codes.filter(c => c.type === 'hcpcs');
+  }, [codes]);
+  
   // Limit visible codes for performance
-  const visibleCodes = useMemo(() => codes.slice(0, 100), [codes]);
-  const hasMore = codes.length > 100;
+  const visibleHcpcsCodes = useMemo(() => hcpcsCodes.slice(0, 100), [hcpcsCodes]);
+  const hasMoreHcpcs = hcpcsCodes.length > 100;
 
   if (codes.length === 0) {
     return (
@@ -35,26 +46,93 @@ export function CodeResultsList({
     );
   }
 
+  // ICD-10-CM only view - show hierarchical tree
+  if (showHierarchy) {
+    return (
+      <ICD10TreeView
+        selectedCodes={selectedCodes}
+        onToggle={onToggle}
+        searchQuery={searchQuery}
+      />
+    );
+  }
+
+  // HCPCS only view - show flat list
+  if (codeTypeFilter === 'hcpcs') {
+    return (
+      <ScrollArea className="h-[calc(100vh-380px)] min-h-[400px] scrollbar-thin">
+        <div className="space-y-2 pr-4">
+          {visibleHcpcsCodes.map((code) => (
+            <CodeResultItem
+              key={`${code.type}-${code.code}`}
+              code={code}
+              isSelected={selectedCodes.has(code.code)}
+              onToggle={() => onToggle(code.code)}
+              searchQuery={searchQuery}
+            />
+          ))}
+          
+          {hasMoreHcpcs && (
+            <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
+              <p className="text-sm text-muted-foreground">
+                Showing {visibleHcpcsCodes.length} of {hcpcsCodes.length.toLocaleString()} results.
+                <br />
+                <span className="text-xs">Refine your search to see more specific results.</span>
+              </p>
+            </div>
+          )}
+        </div>
+      </ScrollArea>
+    );
+  }
+
+  // All codes view - show both sections
   return (
     <ScrollArea className="h-[calc(100vh-380px)] min-h-[400px] scrollbar-thin">
-      <div className="space-y-2 pr-4">
-        {visibleCodes.map((code) => (
-          <CodeResultItem
-            key={`${code.type}-${code.code}`}
-            code={code}
-            isSelected={selectedCodes.has(code.code)}
-            onToggle={() => onToggle(code.code)}
+      <div className="space-y-6 pr-4">
+        {/* ICD-10-CM Section */}
+        <div>
+          <div className="mb-3 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-foreground">ICD-10-CM Codes</h3>
+            <span className="rounded-full bg-code-badge-icd px-2 py-0.5 text-xs font-medium text-code-icd">
+              Hierarchical
+            </span>
+          </div>
+          <ICD10TreeView
+            selectedCodes={selectedCodes}
+            onToggle={onToggle}
             searchQuery={searchQuery}
           />
-        ))}
+        </div>
         
-        {hasMore && (
-          <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              Showing {visibleCodes.length} of {codes.length.toLocaleString()} results.
-              <br />
-              <span className="text-xs">Refine your search to see more specific results.</span>
-            </p>
+        {/* HCPCS Section */}
+        {hcpcsCodes.length > 0 && (
+          <div>
+            <div className="mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-foreground">HCPCS/CPT Codes</h3>
+              <span className="rounded-full bg-code-badge-cpt px-2 py-0.5 text-xs font-medium text-code-cpt">
+                {hcpcsCodes.length} codes
+              </span>
+            </div>
+            <div className="space-y-2">
+              {visibleHcpcsCodes.map((code) => (
+                <CodeResultItem
+                  key={`${code.type}-${code.code}`}
+                  code={code}
+                  isSelected={selectedCodes.has(code.code)}
+                  onToggle={() => onToggle(code.code)}
+                  searchQuery={searchQuery}
+                />
+              ))}
+              
+              {hasMoreHcpcs && (
+                <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
+                  <p className="text-sm text-muted-foreground">
+                    Showing {visibleHcpcsCodes.length} of {hcpcsCodes.length.toLocaleString()} results.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

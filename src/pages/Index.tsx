@@ -69,6 +69,7 @@ const Index = () => {
             selectedCodes={selectedCodes}
             onToggle={toggleCode}
             searchQuery={searchQuery}
+            codeTypeFilter={codeTypeFilter}
           />
         </Card>
       </div>

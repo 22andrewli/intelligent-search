@@ -57,6 +57,16 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        code: {
+          icd: "hsl(var(--code-icd))",
+          cpt: "hsl(var(--code-cpt))",
+          "badge-icd": "hsl(var(--code-badge-icd))",
+          "badge-cpt": "hsl(var(--code-badge-cpt))",
+        },
+        selection: {
+          DEFAULT: "hsl(var(--selection))",
+          bg: "hsl(var(--selection-bg))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

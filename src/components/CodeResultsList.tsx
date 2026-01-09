@@ -23,14 +23,15 @@ export function CodeResultsList({
   // For ICD-10 only view, show hierarchical tree
   const showHierarchy = codeTypeFilter === 'icd10cm';
   
-  // For flat view (HCPCS or All), filter only HCPCS codes when in 'all' mode with hierarchy
-  const hcpcsCodes = useMemo(() => {
-    return codes.filter(c => c.type === 'hcpcs');
-  }, [codes]);
+  // Filter codes by type for flat views
+  const hcpcsCodes = useMemo(() => codes.filter(c => c.type === 'hcpcs'), [codes]);
+  const ndcCodes = useMemo(() => codes.filter(c => c.type === 'ndc'), [codes]);
   
   // Limit visible codes for performance
   const visibleHcpcsCodes = useMemo(() => hcpcsCodes.slice(0, 100), [hcpcsCodes]);
+  const visibleNdcCodes = useMemo(() => ndcCodes.slice(0, 100), [ndcCodes]);
   const hasMoreHcpcs = hcpcsCodes.length > 100;
+  const hasMoreNdc = ndcCodes.length > 100;
 
   if (codes.length === 0) {
     return (
@@ -86,7 +87,36 @@ export function CodeResultsList({
     );
   }
 
-  // All codes view - show both sections
+  // NDC only view - show flat list
+  if (codeTypeFilter === 'ndc') {
+    return (
+      <ScrollArea className="h-[calc(100vh-380px)] min-h-[400px] scrollbar-thin">
+        <div className="space-y-2 pr-4">
+          {visibleNdcCodes.map((code) => (
+            <CodeResultItem
+              key={`${code.type}-${code.code}`}
+              code={code}
+              isSelected={selectedCodes.has(code.code)}
+              onToggle={() => onToggle(code.code)}
+              searchQuery={searchQuery}
+            />
+          ))}
+          
+          {hasMoreNdc && (
+            <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
+              <p className="text-sm text-muted-foreground">
+                Showing {visibleNdcCodes.length} of {ndcCodes.length.toLocaleString()} results.
+                <br />
+                <span className="text-xs">Refine your search to see more specific results.</span>
+              </p>
+            </div>
+          )}
+        </div>
+      </ScrollArea>
+    );
+  }
+
+  // All codes view - show all sections
   return (
     <ScrollArea className="h-[calc(100vh-380px)] min-h-[400px] scrollbar-thin">
       <div className="space-y-6 pr-4">
@@ -129,6 +159,37 @@ export function CodeResultsList({
                 <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
                   <p className="text-sm text-muted-foreground">
                     Showing {visibleHcpcsCodes.length} of {hcpcsCodes.length.toLocaleString()} results.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* NDC Section */}
+        {ndcCodes.length > 0 && (
+          <div>
+            <div className="mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-foreground">NDC Codes</h3>
+              <span className="rounded-full bg-code-badge-ndc px-2 py-0.5 text-xs font-medium text-code-ndc">
+                {ndcCodes.length} codes
+              </span>
+            </div>
+            <div className="space-y-2">
+              {visibleNdcCodes.map((code) => (
+                <CodeResultItem
+                  key={`${code.type}-${code.code}`}
+                  code={code}
+                  isSelected={selectedCodes.has(code.code)}
+                  onToggle={() => onToggle(code.code)}
+                  searchQuery={searchQuery}
+                />
+              ))}
+              
+              {hasMoreNdc && (
+                <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
+                  <p className="text-sm text-muted-foreground">
+                    Showing {visibleNdcCodes.length} of {ndcCodes.length.toLocaleString()} results.
                   </p>
                 </div>
               )}

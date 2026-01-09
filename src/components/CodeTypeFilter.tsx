@@ -8,6 +8,7 @@ interface CodeTypeFilterProps {
     all: number;
     icd10cm: number;
     hcpcs: number;
+    ndc: number;
   };
 }
 
@@ -40,6 +41,15 @@ export function CodeTypeFilter({ value, onChange, counts }: CodeTypeFilterProps)
           HCPCS/CPT
           <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground data-[state=active]:bg-primary-foreground/20 data-[state=active]:text-accent-foreground">
             {counts.hcpcs}
+          </span>
+        </TabsTrigger>
+        <TabsTrigger 
+          value="ndc"
+          className="px-4 data-[state=active]:bg-code-ndc data-[state=active]:text-primary-foreground"
+        >
+          NDC
+          <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground data-[state=active]:bg-primary-foreground/20 data-[state=active]:text-primary-foreground">
+            {counts.ndc}
           </span>
         </TabsTrigger>
       </TabsList>

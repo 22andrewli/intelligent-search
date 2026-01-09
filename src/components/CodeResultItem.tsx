@@ -42,6 +42,15 @@ export const CodeResultItem = memo(function CodeResultItem({
   searchQuery,
 }: CodeResultItemProps) {
   const isICD = code.type === 'icd10cm';
+  const isNDC = code.type === 'ndc';
+  
+  const getTypeStyles = () => {
+    if (isICD) return { badge: 'bg-code-badge-icd text-code-icd', label: 'ICD-10' };
+    if (isNDC) return { badge: 'bg-code-badge-ndc text-code-ndc', label: 'NDC' };
+    return { badge: 'bg-code-badge-cpt text-code-cpt', label: 'HCPCS' };
+  };
+  
+  const typeStyles = getTypeStyles();
   
   return (
     <button
@@ -71,9 +80,7 @@ export const CodeResultItem = memo(function CodeResultItem({
           <span
             className={cn(
               'shrink-0 rounded-md px-2.5 py-1 text-sm font-mono font-semibold',
-              isICD
-                ? 'bg-code-badge-icd text-code-icd'
-                : 'bg-code-badge-cpt text-code-cpt'
+              typeStyles.badge
             )}
           >
             {highlightMatch(code.code, searchQuery)}
@@ -83,12 +90,10 @@ export const CodeResultItem = memo(function CodeResultItem({
           <span
             className={cn(
               'shrink-0 rounded-full px-2 py-0.5 text-xs font-medium',
-              isICD
-                ? 'bg-code-badge-icd text-code-icd'
-                : 'bg-code-badge-cpt text-code-cpt'
+              typeStyles.badge
             )}
           >
-            {isICD ? 'ICD-10' : 'HCPCS'}
+            {typeStyles.label}
           </span>
         </div>
 
@@ -97,10 +102,11 @@ export const CodeResultItem = memo(function CodeResultItem({
           {highlightMatch(code.name, searchQuery)}
         </p>
 
-        {/* Category / Level indicator */}
-        {(code.category || code.level) && (
+        {/* Category / Level / Manufacturer indicator */}
+        {(code.category || code.level || code.manufacturer) && (
           <p className="text-xs text-muted-foreground">
-            {code.category || (code.level && `Level ${code.level}`)}
+            {code.category || code.manufacturer || (code.level && `Level ${code.level}`)}
+            {code.packageSize && ` • ${code.packageSize}`}
             {code.parentCode && ` • Parent: ${code.parentCode}`}
           </p>
         )}

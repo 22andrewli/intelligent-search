@@ -119,7 +119,7 @@ export function CodeResultsList({
   // All codes view - show all sections
   return (
     <ScrollArea className="h-[calc(100vh-380px)] min-h-[400px] scrollbar-thin">
-      <div className="space-y-6 pr-4">
+      <div className="space-y-3 pr-4">
         {/* ICD-10-CM Section */}
         <div>
           <div className="mb-3 flex items-center gap-2">

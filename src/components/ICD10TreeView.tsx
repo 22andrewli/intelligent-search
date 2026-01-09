@@ -15,6 +15,7 @@ interface ICD10TreeViewProps {
   selectedCodes: Set<string>;
   onToggle: (code: string) => void;
   searchQuery: string;
+  embedded?: boolean; // When true, doesn't wrap in ScrollArea (for use inside another ScrollArea)
 }
 
 function filterTree(nodes: ICD10Code[], query: string): ICD10Code[] {
@@ -57,6 +58,7 @@ export function ICD10TreeView({
   selectedCodes,
   onToggle,
   searchQuery,
+  embedded = false,
 }: ICD10TreeViewProps) {
   const filteredCodes = useMemo(() => {
     return filterTree(icd10Data.icd10cm.codes as ICD10Code[], searchQuery);
@@ -64,7 +66,7 @@ export function ICD10TreeView({
 
   if (filteredCodes.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
+      <div className="flex flex-col items-center justify-center py-8 text-center">
         <div className="mb-4 rounded-full bg-muted p-4">
           <FileSearch className="h-8 w-8 text-muted-foreground" />
         </div>
@@ -76,21 +78,30 @@ export function ICD10TreeView({
     );
   }
 
+  const treeContent = (
+    <div className="space-y-2 pr-4">
+      {filteredCodes.map((code) => (
+        <CodeTreeItem
+          key={code.code}
+          node={code}
+          isSelected={selectedCodes.has(code.code)}
+          onToggleSelect={onToggle}
+          selectedCodes={selectedCodes}
+          searchQuery={searchQuery}
+          defaultExpanded={!!searchQuery.trim()}
+        />
+      ))}
+    </div>
+  );
+
+  // When embedded in another ScrollArea, don't add another wrapper
+  if (embedded) {
+    return treeContent;
+  }
+
   return (
     <ScrollArea className="h-[calc(100vh-380px)] min-h-[400px] scrollbar-thin">
-      <div className="space-y-2 pr-4">
-        {filteredCodes.map((code) => (
-          <CodeTreeItem
-            key={code.code}
-            node={code}
-            isSelected={selectedCodes.has(code.code)}
-            onToggleSelect={onToggle}
-            selectedCodes={selectedCodes}
-            searchQuery={searchQuery}
-            defaultExpanded={!!searchQuery.trim()}
-          />
-        ))}
-      </div>
+      {treeContent}
     </ScrollArea>
   );
 }

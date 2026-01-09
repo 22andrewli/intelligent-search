@@ -132,6 +132,7 @@ export function CodeResultsList({
             selectedCodes={selectedCodes}
             onToggle={onToggle}
             searchQuery={searchQuery}
+            embedded
           />
         </div>
         

@@ -41,8 +41,10 @@
     /* Custom healthcare tokens */
     --code-icd: 199 89% 48%;
     --code-cpt: 173 58% 39%;
+    --code-ndc: 262 52% 47%;
     --code-badge-icd: 199 89% 95%;
     --code-badge-cpt: 173 58% 93%;
+    --code-badge-ndc: 262 52% 93%;
     --selection: 199 89% 48%;
     --selection-bg: 199 89% 95%;
     
@@ -87,8 +89,10 @@
 
     --code-icd: 199 89% 55%;
     --code-cpt: 173 58% 50%;
+    --code-ndc: 262 52% 55%;
     --code-badge-icd: 199 60% 15%;
     --code-badge-cpt: 173 40% 15%;
+    --code-badge-ndc: 262 40% 15%;
     --selection: 199 89% 55%;
     --selection-bg: 199 50% 15%;
 

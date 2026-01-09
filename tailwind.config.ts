@@ -60,8 +60,10 @@ export default {
         code: {
           icd: "hsl(var(--code-icd))",
           cpt: "hsl(var(--code-cpt))",
+          ndc: "hsl(var(--code-ndc))",
           "badge-icd": "hsl(var(--code-badge-icd))",
           "badge-cpt": "hsl(var(--code-badge-cpt))",
+          "badge-ndc": "hsl(var(--code-badge-ndc))",
         },
         selection: {
           DEFAULT: "hsl(var(--selection))",

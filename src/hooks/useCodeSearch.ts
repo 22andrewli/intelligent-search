@@ -1,6 +1,7 @@
 import { useMemo, useState, useCallback } from 'react';
 import icd10Data from '@/data/icd10cm_hierarchy.json';
 import { hcpcsCodes } from '@/data/hcpcs_codes';
+import { ndcCodes } from '@/data/ndc_codes';
 import { FlattenedCode, ICD10Code, CodeType } from '@/types/codes';
 
 function flattenICD10Codes(codes: ICD10Code[], parentCode?: string): FlattenedCode[] {
@@ -37,8 +38,15 @@ export function useCodeSearch() {
       type: 'hcpcs' as CodeType,
       category: c.category,
     }));
+    const ndcFlattened: FlattenedCode[] = ndcCodes.map(c => ({
+      code: c.code,
+      name: c.name,
+      type: 'ndc' as CodeType,
+      manufacturer: c.manufacturer,
+      packageSize: c.packageSize,
+    }));
     
-    return [...icd10Flattened, ...hcpcsFlattened];
+    return [...icd10Flattened, ...hcpcsFlattened, ...ndcFlattened];
   }, []);
 
   // Filter codes based on search query and type filter

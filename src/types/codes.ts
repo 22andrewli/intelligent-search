@@ -1,4 +1,4 @@
-export type CodeType = 'icd10cm' | 'hcpcs';
+export type CodeType = 'icd10cm' | 'hcpcs' | 'ndc';
 
 export interface ICD10Code {
   code: string;
@@ -13,6 +13,13 @@ export interface HCPCSCode {
   category: string;
 }
 
+export interface NDCCode {
+  code: string;
+  name: string;
+  manufacturer: string;
+  packageSize: string;
+}
+
 export interface FlattenedCode {
   code: string;
   name: string;
@@ -20,4 +27,6 @@ export interface FlattenedCode {
   category?: string;
   level?: number;
   parentCode?: string;
+  manufacturer?: string;
+  packageSize?: string;
 }

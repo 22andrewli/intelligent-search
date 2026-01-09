@@ -26,6 +26,7 @@ const Index = () => {
     all: filteredCodes.length,
     icd10cm: filteredCodes.filter(c => c.type === 'icd10cm').length,
     hcpcs: filteredCodes.filter(c => c.type === 'hcpcs').length,
+    ndc: filteredCodes.filter(c => c.type === 'ndc').length,
   }), [filteredCodes]);
 
   return (

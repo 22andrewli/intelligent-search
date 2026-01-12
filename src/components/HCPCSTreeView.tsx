@@ -9,6 +9,7 @@ interface HCPCSCodeNode {
   name: string;
   level: number;
   children?: HCPCSCodeNode[];
+  letter?: string; // Letter code for category display
 }
 
 interface HCPCSTreeViewProps {
@@ -21,14 +22,16 @@ interface HCPCSTreeViewProps {
 // Build hierarchy from flat HCPCS codes
 function buildHCPCSHierarchy(codes: typeof hcpcsCodes): HCPCSCodeNode[] {
   // Group codes by category
-  const categoryMap = new Map<string, HCPCSCodeNode[]>();
+  const categoryMap = new Map<string, { letter: string; children: HCPCSCodeNode[] }>();
   
   for (const code of codes) {
     const category = code.category;
     if (!categoryMap.has(category)) {
-      categoryMap.set(category, []);
+      // Extract the letter from the first code in this category
+      const letter = code.code.charAt(0).toUpperCase();
+      categoryMap.set(category, { letter, children: [] });
     }
-    categoryMap.get(category)!.push({
+    categoryMap.get(category)!.children.push({
       code: code.code,
       name: code.name,
       level: 2, // Child level
@@ -38,20 +41,21 @@ function buildHCPCSHierarchy(codes: typeof hcpcsCodes): HCPCSCodeNode[] {
   // Build hierarchy with categories as parents
   const hierarchy: HCPCSCodeNode[] = [];
   
-  // Sort categories alphabetically
+  // Sort categories alphabetically by letter
   const sortedCategories = Array.from(categoryMap.entries()).sort((a, b) => 
-    a[0].localeCompare(b[0])
+    a[1].letter.localeCompare(b[1].letter)
   );
   
-  for (const [category, children] of sortedCategories) {
+  for (const [category, { letter, children }] of sortedCategories) {
     // Sort children by code
     const sortedChildren = children.sort((a, b) => a.code.localeCompare(b.code));
     
     hierarchy.push({
-      code: category, // Use category as the code for parent nodes
-      name: category,
+      code: category, // Keep category name as code for selection logic
+      name: category, // Full category name for display
       level: 1, // Parent level
       children: sortedChildren,
+      letter, // Letter code for display
     });
   }
   
@@ -64,7 +68,8 @@ function filterTree(nodes: HCPCSCodeNode[], query: string): HCPCSCodeNode[] {
   const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
   
   function nodeMatches(node: HCPCSCodeNode): boolean {
-    const searchableText = `${node.code} ${node.name}`.toLowerCase();
+    // Include letter in search for category nodes
+    const searchableText = `${node.letter || ''} ${node.code} ${node.name}`.toLowerCase();
     return terms.every(term => searchableText.includes(term));
   }
   

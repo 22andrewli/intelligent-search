@@ -7,6 +7,7 @@ interface CodeTreeNode {
   name: string;
   level: number;
   children?: CodeTreeNode[];
+  letter?: string; // Optional letter for HCPCS categories
 }
 
 interface CodeTreeItemProps {
@@ -150,7 +151,7 @@ export const CodeTreeItem = memo(function CodeTreeItem({
                 node.level === 1 && 'text-base'
               )}
             >
-              {highlightMatch(node.code, searchQuery)}
+              {highlightMatch(node.letter || node.code, searchQuery)}
             </span>
             
             {/* Level indicator */}

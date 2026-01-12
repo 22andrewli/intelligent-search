@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useCodeSearch } from '@/hooks/useCodeSearch';
 import { CodeSearchHeader } from '@/components/CodeSearchHeader';
 import { CodeTypeFilter } from '@/components/CodeTypeFilter';
@@ -19,15 +18,9 @@ const Index = () => {
     codeTypeFilter,
     setCodeTypeFilter,
     filteredCodes,
+    searchFilteredCounts,
     totalCodes,
   } = useCodeSearch();
-
-  const counts = useMemo(() => ({
-    all: filteredCodes.length,
-    icd10cm: filteredCodes.filter(c => c.type === 'icd10cm').length,
-    hcpcs: filteredCodes.filter(c => c.type === 'hcpcs').length,
-    ndc: filteredCodes.filter(c => c.type === 'ndc').length,
-  }), [filteredCodes]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -52,7 +45,7 @@ const Index = () => {
             <CodeTypeFilter
               value={codeTypeFilter}
               onChange={setCodeTypeFilter}
-              counts={counts}
+              counts={searchFilteredCounts}
             />
             <SelectionToolbar
               isAllSelected={isAllSelected}

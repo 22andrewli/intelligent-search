@@ -62,20 +62,8 @@ export function SelectionToolbar({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleToggleAll}
-        className="h-9 w-[120px] gap-2"
-      >
-        <SelectIcon className="h-4 w-4" />
-        {isAllSelected ? 'Deselect All' : isSomeSelected ? 'Deselect All' : 'Select All'}
-      </Button>
-
       {selectedCodes.size > 0 && (
         <>
-          <div className="h-6 w-px bg-border" />
-          
           <Button
             variant="ghost"
             size="sm"
@@ -95,8 +83,20 @@ export function SelectionToolbar({
             <Download className="h-4 w-4" />
             Export CSV
           </Button>
+
+          <div className="h-6 w-px bg-border" />
         </>
       )}
+
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleToggleAll}
+        className="h-9 w-[120px] gap-2"
+      >
+        <SelectIcon className="h-4 w-4" />
+        {isAllSelected ? 'Deselect All' : isSomeSelected ? 'Deselect All' : 'Select All'}
+      </Button>
     </div>
   );
 }

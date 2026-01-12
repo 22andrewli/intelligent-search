@@ -16,6 +16,7 @@ interface CodeTreeItemProps {
   selectedCodes: Set<string>;
   searchQuery: string;
   defaultExpanded?: boolean;
+  codeType?: 'icd10cm' | 'hcpcs'; // Optional type hint for styling
 }
 
 function highlightMatch(text: string, query: string): React.ReactNode {
@@ -49,12 +50,36 @@ export const CodeTreeItem = memo(function CodeTreeItem({
   selectedCodes,
   searchQuery,
   defaultExpanded = false,
+  codeType,
 }: CodeTreeItemProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const hasChildren = node.children && node.children.length > 0;
   
+  // Detect code type if not provided
+  const detectedType = codeType || (() => {
+    // HCPCS codes typically start with A-V or are numeric 5-digit codes
+    // ICD-10 codes have format like A00.0, B01.1, etc.
+    const code = node.code;
+    if (/^[A-V]\d{4}/.test(code) || /^\d{5}/.test(code)) {
+      return 'hcpcs';
+    }
+    if (/^[A-Z]\d{2}/.test(code) || code.includes('.')) {
+      return 'icd10cm';
+    }
+    // If it's a long text (category name), it's likely HCPCS category
+    if (code.length > 10 && !code.includes('.')) {
+      return 'hcpcs';
+    }
+    return 'icd10cm'; // Default
+  })();
+  
   // Calculate indentation based on level
   const indentLevel = node.level - 1;
+  
+  // Get badge styling based on type
+  const badgeClass = detectedType === 'hcpcs' 
+    ? 'bg-code-badge-cpt text-code-cpt'
+    : 'bg-code-badge-icd text-code-icd';
   
   // Check if any children are selected
   const hasSelectedChildren = hasChildren && node.children!.some(child => {
@@ -121,7 +146,7 @@ export const CodeTreeItem = memo(function CodeTreeItem({
             <span
               className={cn(
                 'shrink-0 rounded-md px-2 py-0.5 text-sm font-mono font-semibold',
-                'bg-code-badge-icd text-code-icd',
+                badgeClass,
                 node.level === 1 && 'text-base'
               )}
             >

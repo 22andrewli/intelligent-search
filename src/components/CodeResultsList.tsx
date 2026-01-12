@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { FlattenedCode, CodeType } from '@/types/codes';
 import { CodeResultItem } from './CodeResultItem';
 import { ICD10TreeView } from './ICD10TreeView';
+import { HCPCSTreeView } from './HCPCSTreeView';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { FileSearch, ChevronDown, ChevronRight } from 'lucide-react';
@@ -26,8 +27,9 @@ export function CodeResultsList({
   const [hcpcsOpen, setHcpcsOpen] = useState(true);
   const [ndcOpen, setNdcOpen] = useState(true);
 
-  // For ICD-10 only view, show hierarchical tree
-  const showHierarchy = codeTypeFilter === 'icd10cm';
+  // For ICD-10 and HCPCS only views, show hierarchical tree
+  const showICDHierarchy = codeTypeFilter === 'icd10cm';
+  const showHCPCSHierarchy = codeTypeFilter === 'hcpcs';
   
   // Filter codes by type for flat views
   const hcpcsCodes = useMemo(() => codes.filter(c => c.type === 'hcpcs'), [codes]);
@@ -54,7 +56,7 @@ export function CodeResultsList({
   }
 
   // ICD-10-CM only view - show hierarchical tree
-  if (showHierarchy) {
+  if (showICDHierarchy) {
     return (
       <ICD10TreeView
         selectedCodes={selectedCodes}
@@ -64,32 +66,14 @@ export function CodeResultsList({
     );
   }
 
-  // HCPCS only view - show flat list
-  if (codeTypeFilter === 'hcpcs') {
+  // HCPCS only view - show hierarchical tree
+  if (showHCPCSHierarchy) {
     return (
-      <ScrollArea className="h-[calc(100vh-380px)] min-h-[400px] scrollbar-thin">
-        <div className="space-y-2 pr-4">
-          {visibleHcpcsCodes.map((code) => (
-            <CodeResultItem
-              key={`${code.type}-${code.code}`}
-              code={code}
-              isSelected={selectedCodes.has(code.code)}
-              onToggle={() => onToggle(code.code)}
-              searchQuery={searchQuery}
-            />
-          ))}
-          
-          {hasMoreHcpcs && (
-            <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
-              <p className="text-sm text-muted-foreground">
-                Showing {visibleHcpcsCodes.length} of {hcpcsCodes.length.toLocaleString()} results.
-                <br />
-                <span className="text-xs">Refine your search to see more specific results.</span>
-              </p>
-            </div>
-          )}
-        </div>
-      </ScrollArea>
+      <HCPCSTreeView
+        selectedCodes={selectedCodes}
+        onToggle={onToggle}
+        searchQuery={searchQuery}
+      />
     );
   }
 
@@ -161,29 +145,16 @@ export function CodeResultsList({
               )}
               <h3 className="text-sm font-semibold text-foreground">HCPCS/CPT Codes</h3>
               <span className="rounded-full bg-code-badge-cpt px-2 py-0.5 text-xs font-medium text-code-cpt">
-                {hcpcsCodes.length} codes
+                Hierarchical
               </span>
             </CollapsibleTrigger>
             <CollapsibleContent className="pt-2">
-              <div className="space-y-2">
-                {visibleHcpcsCodes.map((code) => (
-                  <CodeResultItem
-                    key={`${code.type}-${code.code}`}
-                    code={code}
-                    isSelected={selectedCodes.has(code.code)}
-                    onToggle={() => onToggle(code.code)}
-                    searchQuery={searchQuery}
-                  />
-                ))}
-                
-                {hasMoreHcpcs && (
-                  <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      Showing {visibleHcpcsCodes.length} of {hcpcsCodes.length.toLocaleString()} results.
-                    </p>
-                  </div>
-                )}
-              </div>
+              <HCPCSTreeView
+                selectedCodes={selectedCodes}
+                onToggle={onToggle}
+                searchQuery={searchQuery}
+                embedded
+              />
             </CollapsibleContent>
           </Collapsible>
         )}

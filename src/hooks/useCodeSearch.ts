@@ -107,35 +107,61 @@ export function useCodeSearch() {
     return codes;
   }, [searchFilteredCodes, codeTypeFilter]);
 
-  // Selection handlers - when toggling a parent ICD-10 code, also toggle all children
+  // Helper to get all HCPCS codes in a category
+  function getHCPCSCodesInCategory(category: string): string[] {
+    return hcpcsCodes
+      .filter(c => c.category === category)
+      .map(c => c.code);
+  }
+
+  // Selection handlers - when toggling a parent ICD-10 code or HCPCS category, also toggle all children
   const toggleCode = useCallback((code: string) => {
     setSelectedCodes(prev => {
       const next = new Set(prev);
       
-      // Get all descendant codes for ICD-10 hierarchical selection
-      const allCodesToToggle = getAllDescendantCodes(icd10Data.icd10cm.codes as ICD10Code[], code);
+      // Check if this is an HCPCS category (category names are used as parent codes in the tree)
+      const hcpcsCategoryCodes = getHCPCSCodesInCategory(code);
       
-      // If no descendants found (non-ICD10 or leaf node), just toggle the single code
-      if (allCodesToToggle.length === 0) {
-        if (next.has(code)) {
-          next.delete(code);
+      // Get all descendant codes for ICD-10 hierarchical selection
+      const icd10Descendants = getAllDescendantCodes(icd10Data.icd10cm.codes as ICD10Code[], code);
+      
+      // Determine which type of hierarchical selection this is
+      if (hcpcsCategoryCodes.length > 0) {
+        // This is an HCPCS category - toggle all codes in the category
+        const isCurrentlySelected = hcpcsCategoryCodes.every(c => next.has(c));
+        
+        if (isCurrentlySelected) {
+          // Deselect all codes in category
+          for (const c of hcpcsCategoryCodes) {
+            next.delete(c);
+          }
         } else {
-          next.add(code);
+          // Select all codes in category
+          for (const c of hcpcsCategoryCodes) {
+            next.add(c);
+          }
         }
-      } else {
-        // Check if the parent is currently selected
+      } else if (icd10Descendants.length > 0) {
+        // This is an ICD-10 parent code - toggle all descendants
         const isCurrentlySelected = next.has(code);
         
         if (isCurrentlySelected) {
           // Deselect all
-          for (const c of allCodesToToggle) {
+          for (const c of icd10Descendants) {
             next.delete(c);
           }
         } else {
           // Select all
-          for (const c of allCodesToToggle) {
+          for (const c of icd10Descendants) {
             next.add(c);
           }
+        }
+      } else {
+        // Leaf node or non-hierarchical code - just toggle the single code
+        if (next.has(code)) {
+          next.delete(code);
+        } else {
+          next.add(code);
         }
       }
       

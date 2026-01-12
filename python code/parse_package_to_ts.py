@@ -5,7 +5,7 @@ Parse package.txt and generate ndc_codes.ts TypeScript file
 
 import csv
 import re
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 
 def extract_package_size(description: str) -> str:
@@ -65,11 +65,12 @@ def format_ndc_code(ndc_code: str) -> str:
     return ndc_code
 
 
-def load_manufacturer_mapping(product_file: str) -> Dict[str, str]:
-    """Load manufacturer mapping from product.txt"""
+def load_product_data(product_file: str) -> Tuple[Dict[str, str], Dict[str, str]]:
+    """Load manufacturer and brand name mappings from product file"""
     manufacturer_map = {}
+    brand_name_map = {}
     
-    print(f"Loading manufacturer data from {product_file}...", file=__import__('sys').stderr)
+    print(f"Loading product data from {product_file}...", file=__import__('sys').stderr)
     
     try:
         with open(product_file, 'r', encoding='utf-8', errors='ignore') as f:
@@ -81,24 +82,35 @@ def load_manufacturer_mapping(product_file: str) -> Dict[str, str]:
                 
                 product_ndc = row.get('PRODUCTNDC', '').strip()
                 labeler_name = row.get('LABELERNAME', '').strip()
+                proprietary_name = row.get('PROPRIETARYNAME', '').strip()
+                proprietary_suffix = row.get('PROPRIETARYNAMESUFFIX', '').strip()
                 ndc_exclude_flag = row.get('NDC_EXCLUDE_FLAG', '').strip()
                 
                 # Skip excluded products
                 if ndc_exclude_flag == 'Y':
                     continue
                 
-                if product_ndc and labeler_name:
+                if product_ndc:
                     # Store the manufacturer for this product NDC
-                    manufacturer_map[product_ndc] = labeler_name
+                    if labeler_name:
+                        manufacturer_map[product_ndc] = labeler_name
+                    
+                    # Build brand name: PROPRIETARYNAME + PROPRIETARYNAMESUFFIX
+                    if proprietary_name:
+                        brand_name = proprietary_name
+                        if proprietary_suffix:
+                            brand_name = f"{brand_name} {proprietary_suffix}"
+                        brand_name_map[product_ndc] = brand_name
         
         print(f"Loaded {len(manufacturer_map)} product-to-manufacturer mappings", file=__import__('sys').stderr)
+        print(f"Loaded {len(brand_name_map)} product-to-brand-name mappings", file=__import__('sys').stderr)
     except FileNotFoundError:
-        print(f"Warning: {product_file} not found, manufacturer data will be empty", file=__import__('sys').stderr)
+        print(f"Warning: {product_file} not found, product data will be empty", file=__import__('sys').stderr)
     
-    return manufacturer_map
+    return manufacturer_map, brand_name_map
 
 
-def parse_package_file(input_file: str, manufacturer_map: Dict[str, str]) -> List[Dict]:
+def parse_package_file(input_file: str, manufacturer_map: Dict[str, str], brand_name_map: Dict[str, str]) -> List[Dict]:
     """Parse package.txt and extract NDC codes"""
     ndc_codes = []
     
@@ -120,21 +132,27 @@ def parse_package_file(input_file: str, manufacturer_map: Dict[str, str]) -> Lis
             if ndc_exclude_flag == 'Y':
                 continue
             
-            if not ndc_package_code or not package_description:
+            if not ndc_package_code:
                 continue
             
             # Format the NDC code
             formatted_code = format_ndc_code(ndc_package_code)
             
-            # Extract package size
-            package_size = extract_package_size(package_description)
+            # Extract package size from package description
+            package_size = extract_package_size(package_description) if package_description else ""
             
             # Get manufacturer from mapping using PRODUCTNDC
             manufacturer = manufacturer_map.get(product_ndc, "")
             
+            # Get brand name from mapping using PRODUCTNDC, fallback to package description if not found
+            brand_name = brand_name_map.get(product_ndc, "")
+            if not brand_name and package_description:
+                # Fallback to package description if no brand name available
+                brand_name = package_description
+            
             ndc_codes.append({
                 'code': formatted_code,
-                'name': package_description,
+                'name': brand_name,
                 'manufacturer': manufacturer,
                 'packageSize': package_size
             })
@@ -180,16 +198,16 @@ def generate_typescript(ndc_codes: List[Dict], output_file: str):
 
 
 def main():
-    input_file = '../src/data/package.txt'
-    product_file = '../src/data/product.txt'
+    input_file = '../src/data/ndc_package_RAW.txt'
+    product_file = '../src/data/ndc_product_RAW.txt'
     output_file = '../src/data/ndc_codes.ts'
     
     try:
-        # Load manufacturer mapping from product.txt
-        manufacturer_map = load_manufacturer_mapping(product_file)
+        # Load product data (manufacturer and brand names) from product file
+        manufacturer_map, brand_name_map = load_product_data(product_file)
         
-        # Parse package.txt with manufacturer mapping
-        ndc_codes = parse_package_file(input_file, manufacturer_map)
+        # Parse package file with product data
+        ndc_codes = parse_package_file(input_file, manufacturer_map, brand_name_map)
         
         # Remove duplicates based on code
         seen = set()

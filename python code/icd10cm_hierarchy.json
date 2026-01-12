@@ -1,0 +1,534 @@
+{
+  "icd10cm": {
+    "codes": [
+      {
+        "code": "A00",
+        "name": "Cholera due to Vibrio cholerae 01, biovar cholerae",
+        "level": 1,
+        "children": [
+          {
+            "code": "A00.0",
+            "name": "Cholera due to Vibrio cholerae 01, biovar cholerae",
+            "level": 2
+          },
+          {
+            "code": "A00.1",
+            "name": "Cholera due to Vibrio cholerae 01, biovar eltor",
+            "level": 2
+          },
+          {
+            "code": "A00.9",
+            "name": "Cholera, unspecified",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "A01",
+        "name": "Typhoid fever, unspecified",
+        "level": 1,
+        "children": [
+          {
+            "code": "A01.0",
+            "name": "Typhoid fever, unspecified",
+            "level": 2
+          },
+          {
+            "code": "A01.1",
+            "name": "Paratyphoid fever A",
+            "level": 2
+          },
+          {
+            "code": "A01.2",
+            "name": "Paratyphoid fever B",
+            "level": 2
+          },
+          {
+            "code": "A01.3",
+            "name": "Paratyphoid fever C",
+            "level": 2
+          },
+          {
+            "code": "A01.4",
+            "name": "Paratyphoid fever, unspecified",
+            "level": 2
+          },
+          {
+            "code": "A01.9",
+            "name": "ICD-10-CM Code A01.9",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "B00",
+        "name": "Eczema herpeticum",
+        "level": 1,
+        "children": [
+          {
+            "code": "B00.0",
+            "name": "Eczema herpeticum",
+            "level": 2
+          },
+          {
+            "code": "B00.1",
+            "name": "Herpesviral vesicular dermatitis",
+            "level": 2
+          },
+          {
+            "code": "B00.2",
+            "name": "Herpesviral gingivostomatitis and pharyngotonsillitis",
+            "level": 2
+          },
+          {
+            "code": "B00.9",
+            "name": "Herpesviral infection, unspecified",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "C00",
+        "name": "Malignant neoplasm of external upper lip",
+        "level": 1,
+        "children": [
+          {
+            "code": "C00.0",
+            "name": "Malignant neoplasm of external upper lip",
+            "level": 2
+          },
+          {
+            "code": "C00.1",
+            "name": "Malignant neoplasm of external lower lip",
+            "level": 2
+          },
+          {
+            "code": "C00.2",
+            "name": "Malignant neoplasm of external lip, unspecified",
+            "level": 2
+          },
+          {
+            "code": "C00.3",
+            "name": "Malignant neoplasm of upper lip, inner aspect",
+            "level": 2
+          },
+          {
+            "code": "C00.4",
+            "name": "Malignant neoplasm of lower lip, inner aspect",
+            "level": 2
+          },
+          {
+            "code": "C00.5",
+            "name": "Malignant neoplasm of lip, unspecified, inner aspect",
+            "level": 2
+          },
+          {
+            "code": "C00.6",
+            "name": "Malignant neoplasm of commissure of lip, unspecified",
+            "level": 2
+          },
+          {
+            "code": "C00.8",
+            "name": "Malignant neoplasm of overlapping sites of lip",
+            "level": 2
+          },
+          {
+            "code": "C00.9",
+            "name": "Malignant neoplasm of lip, unspecified",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "C50",
+        "name": "Malignant neoplasm of nipple and areola, right female breast",
+        "level": 1,
+        "children": [
+          {
+            "code": "C50.0",
+            "name": "Malignant neoplasm of nipple and areola, right female breast",
+            "level": 2
+          },
+          {
+            "code": "C50.1",
+            "name": "Malignant neoplasm of central portion of right female breast",
+            "level": 2
+          },
+          {
+            "code": "C50.2",
+            "name": "Malignant neoplasm of upper-inner quadrant of right female breast",
+            "level": 2
+          },
+          {
+            "code": "C50.3",
+            "name": "Malignant neoplasm of lower-inner quadrant of right female breast",
+            "level": 2
+          },
+          {
+            "code": "C50.4",
+            "name": "Malignant neoplasm of upper-outer quadrant of right female breast",
+            "level": 2
+          },
+          {
+            "code": "C50.5",
+            "name": "Malignant neoplasm of lower-outer quadrant of right female breast",
+            "level": 2
+          },
+          {
+            "code": "C50.6",
+            "name": "Malignant neoplasm of axillary tail of right female breast",
+            "level": 2
+          },
+          {
+            "code": "C50.8",
+            "name": "Malignant neoplasm of overlapping sites of right female breast",
+            "level": 2
+          },
+          {
+            "code": "C50.9",
+            "name": "Malignant neoplasm of unspecified site of right female breast",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "D50",
+        "name": "Iron deficiency anemia secondary to blood loss (chronic)",
+        "level": 1,
+        "children": [
+          {
+            "code": "D50.0",
+            "name": "Iron deficiency anemia secondary to blood loss (chronic)",
+            "level": 2
+          },
+          {
+            "code": "D50.1",
+            "name": "Sideropenic dysphagia",
+            "level": 2
+          },
+          {
+            "code": "D50.8",
+            "name": "Other iron deficiency anemias",
+            "level": 2
+          },
+          {
+            "code": "D50.9",
+            "name": "Iron deficiency anemia, unspecified",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "E10",
+        "name": "Type 1 diabetes mellitus with ketoacidosis without coma",
+        "level": 1,
+        "children": [
+          {
+            "code": "E10.1",
+            "name": "Type 1 diabetes mellitus with ketoacidosis without coma",
+            "level": 2
+          },
+          {
+            "code": "E10.2",
+            "name": "Type 1 diabetes mellitus with diabetic nephropathy",
+            "level": 2
+          },
+          {
+            "code": "E10.9",
+            "name": "Type 1 diabetes mellitus without complications",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "E11",
+        "name": "Type 2 diabetes mellitus with hyperosmolarity without nonketotic hyperglycemic-hyperosmolar coma (NKHHC)",
+        "level": 1,
+        "children": [
+          {
+            "code": "E11.1",
+            "name": "Type 2 diabetes mellitus with ketoacidosis without coma",
+            "level": 2
+          },
+          {
+            "code": "E11.2",
+            "name": "Type 2 diabetes mellitus with diabetic nephropathy",
+            "level": 2
+          },
+          {
+            "code": "E11.9",
+            "name": "Type 2 diabetes mellitus without complications",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "F10",
+        "name": "Alcohol abuse, uncomplicated",
+        "level": 1,
+        "children": [
+          {
+            "code": "F10.1",
+            "name": "Alcohol abuse, uncomplicated",
+            "level": 2
+          },
+          {
+            "code": "F10.2",
+            "name": "Alcohol dependence, uncomplicated",
+            "level": 2
+          },
+          {
+            "code": "F10.9",
+            "name": "Alcohol use, unspecified, uncomplicated",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "F32",
+        "name": "Major depressive disorder, single episode, mild",
+        "level": 1,
+        "children": [
+          {
+            "code": "F32.0",
+            "name": "Major depressive disorder, single episode, mild",
+            "level": 2
+          },
+          {
+            "code": "F32.1",
+            "name": "Major depressive disorder, single episode, moderate",
+            "level": 2
+          },
+          {
+            "code": "F32.2",
+            "name": "Major depressive disorder, single episode, severe without psychotic features",
+            "level": 2
+          },
+          {
+            "code": "F32.3",
+            "name": "Major depressive disorder, single episode, severe with psychotic features",
+            "level": 2
+          },
+          {
+            "code": "F32.4",
+            "name": "Major depressive disorder, single episode, in partial remission",
+            "level": 2
+          },
+          {
+            "code": "F32.5",
+            "name": "Major depressive disorder, single episode, in full remission",
+            "level": 2
+          },
+          {
+            "code": "F32.8",
+            "name": "Premenstrual dysphoric disorder",
+            "level": 2
+          },
+          {
+            "code": "F32.9",
+            "name": "Major depressive disorder, single episode, unspecified",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "I10",
+        "name": "Essential (primary) hypertension",
+        "level": 1
+      },
+      {
+        "code": "I11",
+        "name": "Hypertensive heart disease with heart failure",
+        "level": 1,
+        "children": [
+          {
+            "code": "I11.0",
+            "name": "Hypertensive heart disease with heart failure",
+            "level": 2
+          },
+          {
+            "code": "I11.9",
+            "name": "Hypertensive heart disease without heart failure",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "I20",
+        "name": "Unstable angina",
+        "level": 1,
+        "children": [
+          {
+            "code": "I20.0",
+            "name": "Unstable angina",
+            "level": 2
+          },
+          {
+            "code": "I20.1",
+            "name": "Angina pectoris with documented spasm",
+            "level": 2
+          },
+          {
+            "code": "I20.8",
+            "name": "Angina pectoris with coronary microvascular dysfunction",
+            "level": 2
+          },
+          {
+            "code": "I20.9",
+            "name": "Angina pectoris, unspecified",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "I21",
+        "name": "ST elevation (STEMI) myocardial infarction involving left main coronary artery",
+        "level": 1,
+        "children": [
+          {
+            "code": "I21.0",
+            "name": "ST elevation (STEMI) myocardial infarction involving left main coronary artery",
+            "level": 2
+          },
+          {
+            "code": "I21.1",
+            "name": "ST elevation (STEMI) myocardial infarction involving right coronary artery",
+            "level": 2
+          },
+          {
+            "code": "I21.2",
+            "name": "ST elevation (STEMI) myocardial infarction involving left circumflex coronary artery",
+            "level": 2
+          },
+          {
+            "code": "I21.3",
+            "name": "ST elevation (STEMI) myocardial infarction of unspecified site",
+            "level": 2
+          },
+          {
+            "code": "I21.4",
+            "name": "Non-ST elevation (NSTEMI) myocardial infarction",
+            "level": 2
+          },
+          {
+            "code": "I21.9",
+            "name": "Acute myocardial infarction, unspecified",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "J00",
+        "name": "Acute nasopharyngitis [common cold]",
+        "level": 1
+      },
+      {
+        "code": "J01",
+        "name": "Acute maxillary sinusitis, unspecified",
+        "level": 1,
+        "children": [
+          {
+            "code": "J01.0",
+            "name": "Acute maxillary sinusitis, unspecified",
+            "level": 2
+          },
+          {
+            "code": "J01.1",
+            "name": "Acute frontal sinusitis, unspecified",
+            "level": 2
+          },
+          {
+            "code": "J01.9",
+            "name": "Acute sinusitis, unspecified",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "J44",
+        "name": "Chronic obstructive pulmonary disease with (acute) lower respiratory infection",
+        "level": 1,
+        "children": [
+          {
+            "code": "J44.0",
+            "name": "Chronic obstructive pulmonary disease with (acute) lower respiratory infection",
+            "level": 2
+          },
+          {
+            "code": "J44.1",
+            "name": "Chronic obstructive pulmonary disease with (acute) exacerbation",
+            "level": 2
+          },
+          {
+            "code": "J44.9",
+            "name": "Chronic obstructive pulmonary disease, unspecified",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "M25",
+        "name": "Hemarthrosis, unspecified joint",
+        "level": 1,
+        "children": [
+          {
+            "code": "M25.5",
+            "name": "Pain in unspecified joint",
+            "level": 2,
+            "children": [
+              {
+                "code": "M25.50",
+                "name": "Pain in unspecified joint",
+                "level": 3
+              },
+              {
+                "code": "M25.511",
+                "name": "Pain in right shoulder",
+                "level": 4
+              },
+              {
+                "code": "M25.512",
+                "name": "Pain in left shoulder",
+                "level": 4
+              },
+              {
+                "code": "M25.519",
+                "name": "Pain in unspecified shoulder",
+                "level": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "code": "R50",
+        "name": "Drug induced fever",
+        "level": 1,
+        "children": [
+          {
+            "code": "R50.9",
+            "name": "Fever, unspecified",
+            "level": 2
+          }
+        ]
+      },
+      {
+        "code": "R51",
+        "name": "Headache with orthostatic component, not elsewhere classified",
+        "level": 1,
+        "children": [
+          {
+            "code": "R51.0",
+            "name": "Headache with orthostatic component, not elsewhere classified",
+            "level": 2
+          },
+          {
+            "code": "R51.9",
+            "name": "Headache, unspecified",
+            "level": 2
+          }
+        ]
+      }
+    ]
+  }
+}

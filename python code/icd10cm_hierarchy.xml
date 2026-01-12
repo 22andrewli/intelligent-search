@@ -1,0 +1,335 @@
+<?xml version="1.0" ?>
+<icd10cm>
+  <code value="A00" level="1">
+    <name>Cholera due to Vibrio cholerae 01, biovar cholerae</name>
+    <children>
+      <code value="A00.0" level="2">
+        <name>Cholera due to Vibrio cholerae 01, biovar cholerae</name>
+      </code>
+      <code value="A00.1" level="2">
+        <name>Cholera due to Vibrio cholerae 01, biovar eltor</name>
+      </code>
+      <code value="A00.9" level="2">
+        <name>Cholera, unspecified</name>
+      </code>
+    </children>
+  </code>
+  <code value="A01" level="1">
+    <name>Typhoid fever, unspecified</name>
+    <children>
+      <code value="A01.0" level="2">
+        <name>Typhoid fever, unspecified</name>
+      </code>
+      <code value="A01.1" level="2">
+        <name>Paratyphoid fever A</name>
+      </code>
+      <code value="A01.2" level="2">
+        <name>Paratyphoid fever B</name>
+      </code>
+      <code value="A01.3" level="2">
+        <name>Paratyphoid fever C</name>
+      </code>
+      <code value="A01.4" level="2">
+        <name>Paratyphoid fever, unspecified</name>
+      </code>
+      <code value="A01.9" level="2">
+        <name>ICD-10-CM Code A01.9</name>
+      </code>
+    </children>
+  </code>
+  <code value="B00" level="1">
+    <name>Eczema herpeticum</name>
+    <children>
+      <code value="B00.0" level="2">
+        <name>Eczema herpeticum</name>
+      </code>
+      <code value="B00.1" level="2">
+        <name>Herpesviral vesicular dermatitis</name>
+      </code>
+      <code value="B00.2" level="2">
+        <name>Herpesviral gingivostomatitis and pharyngotonsillitis</name>
+      </code>
+      <code value="B00.9" level="2">
+        <name>Herpesviral infection, unspecified</name>
+      </code>
+    </children>
+  </code>
+  <code value="C00" level="1">
+    <name>Malignant neoplasm of external upper lip</name>
+    <children>
+      <code value="C00.0" level="2">
+        <name>Malignant neoplasm of external upper lip</name>
+      </code>
+      <code value="C00.1" level="2">
+        <name>Malignant neoplasm of external lower lip</name>
+      </code>
+      <code value="C00.2" level="2">
+        <name>Malignant neoplasm of external lip, unspecified</name>
+      </code>
+      <code value="C00.3" level="2">
+        <name>Malignant neoplasm of upper lip, inner aspect</name>
+      </code>
+      <code value="C00.4" level="2">
+        <name>Malignant neoplasm of lower lip, inner aspect</name>
+      </code>
+      <code value="C00.5" level="2">
+        <name>Malignant neoplasm of lip, unspecified, inner aspect</name>
+      </code>
+      <code value="C00.6" level="2">
+        <name>Malignant neoplasm of commissure of lip, unspecified</name>
+      </code>
+      <code value="C00.8" level="2">
+        <name>Malignant neoplasm of overlapping sites of lip</name>
+      </code>
+      <code value="C00.9" level="2">
+        <name>Malignant neoplasm of lip, unspecified</name>
+      </code>
+    </children>
+  </code>
+  <code value="C50" level="1">
+    <name>Malignant neoplasm of nipple and areola, right female breast</name>
+    <children>
+      <code value="C50.0" level="2">
+        <name>Malignant neoplasm of nipple and areola, right female breast</name>
+      </code>
+      <code value="C50.1" level="2">
+        <name>Malignant neoplasm of central portion of right female breast</name>
+      </code>
+      <code value="C50.2" level="2">
+        <name>Malignant neoplasm of upper-inner quadrant of right female breast</name>
+      </code>
+      <code value="C50.3" level="2">
+        <name>Malignant neoplasm of lower-inner quadrant of right female breast</name>
+      </code>
+      <code value="C50.4" level="2">
+        <name>Malignant neoplasm of upper-outer quadrant of right female breast</name>
+      </code>
+      <code value="C50.5" level="2">
+        <name>Malignant neoplasm of lower-outer quadrant of right female breast</name>
+      </code>
+      <code value="C50.6" level="2">
+        <name>Malignant neoplasm of axillary tail of right female breast</name>
+      </code>
+      <code value="C50.8" level="2">
+        <name>Malignant neoplasm of overlapping sites of right female breast</name>
+      </code>
+      <code value="C50.9" level="2">
+        <name>Malignant neoplasm of unspecified site of right female breast</name>
+      </code>
+    </children>
+  </code>
+  <code value="D50" level="1">
+    <name>Iron deficiency anemia secondary to blood loss (chronic)</name>
+    <children>
+      <code value="D50.0" level="2">
+        <name>Iron deficiency anemia secondary to blood loss (chronic)</name>
+      </code>
+      <code value="D50.1" level="2">
+        <name>Sideropenic dysphagia</name>
+      </code>
+      <code value="D50.8" level="2">
+        <name>Other iron deficiency anemias</name>
+      </code>
+      <code value="D50.9" level="2">
+        <name>Iron deficiency anemia, unspecified</name>
+      </code>
+    </children>
+  </code>
+  <code value="E10" level="1">
+    <name>Type 1 diabetes mellitus with ketoacidosis without coma</name>
+    <children>
+      <code value="E10.1" level="2">
+        <name>Type 1 diabetes mellitus with ketoacidosis without coma</name>
+      </code>
+      <code value="E10.2" level="2">
+        <name>Type 1 diabetes mellitus with diabetic nephropathy</name>
+      </code>
+      <code value="E10.9" level="2">
+        <name>Type 1 diabetes mellitus without complications</name>
+      </code>
+    </children>
+  </code>
+  <code value="E11" level="1">
+    <name>Type 2 diabetes mellitus with hyperosmolarity without nonketotic hyperglycemic-hyperosmolar coma (NKHHC)</name>
+    <children>
+      <code value="E11.1" level="2">
+        <name>Type 2 diabetes mellitus with ketoacidosis without coma</name>
+      </code>
+      <code value="E11.2" level="2">
+        <name>Type 2 diabetes mellitus with diabetic nephropathy</name>
+      </code>
+      <code value="E11.9" level="2">
+        <name>Type 2 diabetes mellitus without complications</name>
+      </code>
+    </children>
+  </code>
+  <code value="F10" level="1">
+    <name>Alcohol abuse, uncomplicated</name>
+    <children>
+      <code value="F10.1" level="2">
+        <name>Alcohol abuse, uncomplicated</name>
+      </code>
+      <code value="F10.2" level="2">
+        <name>Alcohol dependence, uncomplicated</name>
+      </code>
+      <code value="F10.9" level="2">
+        <name>Alcohol use, unspecified, uncomplicated</name>
+      </code>
+    </children>
+  </code>
+  <code value="F32" level="1">
+    <name>Major depressive disorder, single episode, mild</name>
+    <children>
+      <code value="F32.0" level="2">
+        <name>Major depressive disorder, single episode, mild</name>
+      </code>
+      <code value="F32.1" level="2">
+        <name>Major depressive disorder, single episode, moderate</name>
+      </code>
+      <code value="F32.2" level="2">
+        <name>Major depressive disorder, single episode, severe without psychotic features</name>
+      </code>
+      <code value="F32.3" level="2">
+        <name>Major depressive disorder, single episode, severe with psychotic features</name>
+      </code>
+      <code value="F32.4" level="2">
+        <name>Major depressive disorder, single episode, in partial remission</name>
+      </code>
+      <code value="F32.5" level="2">
+        <name>Major depressive disorder, single episode, in full remission</name>
+      </code>
+      <code value="F32.8" level="2">
+        <name>Premenstrual dysphoric disorder</name>
+      </code>
+      <code value="F32.9" level="2">
+        <name>Major depressive disorder, single episode, unspecified</name>
+      </code>
+    </children>
+  </code>
+  <code value="I10" level="1">
+    <name>Essential (primary) hypertension</name>
+  </code>
+  <code value="I11" level="1">
+    <name>Hypertensive heart disease with heart failure</name>
+    <children>
+      <code value="I11.0" level="2">
+        <name>Hypertensive heart disease with heart failure</name>
+      </code>
+      <code value="I11.9" level="2">
+        <name>Hypertensive heart disease without heart failure</name>
+      </code>
+    </children>
+  </code>
+  <code value="I20" level="1">
+    <name>Unstable angina</name>
+    <children>
+      <code value="I20.0" level="2">
+        <name>Unstable angina</name>
+      </code>
+      <code value="I20.1" level="2">
+        <name>Angina pectoris with documented spasm</name>
+      </code>
+      <code value="I20.8" level="2">
+        <name>Angina pectoris with coronary microvascular dysfunction</name>
+      </code>
+      <code value="I20.9" level="2">
+        <name>Angina pectoris, unspecified</name>
+      </code>
+    </children>
+  </code>
+  <code value="I21" level="1">
+    <name>ST elevation (STEMI) myocardial infarction involving left main coronary artery</name>
+    <children>
+      <code value="I21.0" level="2">
+        <name>ST elevation (STEMI) myocardial infarction involving left main coronary artery</name>
+      </code>
+      <code value="I21.1" level="2">
+        <name>ST elevation (STEMI) myocardial infarction involving right coronary artery</name>
+      </code>
+      <code value="I21.2" level="2">
+        <name>ST elevation (STEMI) myocardial infarction involving left circumflex coronary artery</name>
+      </code>
+      <code value="I21.3" level="2">
+        <name>ST elevation (STEMI) myocardial infarction of unspecified site</name>
+      </code>
+      <code value="I21.4" level="2">
+        <name>Non-ST elevation (NSTEMI) myocardial infarction</name>
+      </code>
+      <code value="I21.9" level="2">
+        <name>Acute myocardial infarction, unspecified</name>
+      </code>
+    </children>
+  </code>
+  <code value="J00" level="1">
+    <name>Acute nasopharyngitis [common cold]</name>
+  </code>
+  <code value="J01" level="1">
+    <name>Acute maxillary sinusitis, unspecified</name>
+    <children>
+      <code value="J01.0" level="2">
+        <name>Acute maxillary sinusitis, unspecified</name>
+      </code>
+      <code value="J01.1" level="2">
+        <name>Acute frontal sinusitis, unspecified</name>
+      </code>
+      <code value="J01.9" level="2">
+        <name>Acute sinusitis, unspecified</name>
+      </code>
+    </children>
+  </code>
+  <code value="J44" level="1">
+    <name>Chronic obstructive pulmonary disease with (acute) lower respiratory infection</name>
+    <children>
+      <code value="J44.0" level="2">
+        <name>Chronic obstructive pulmonary disease with (acute) lower respiratory infection</name>
+      </code>
+      <code value="J44.1" level="2">
+        <name>Chronic obstructive pulmonary disease with (acute) exacerbation</name>
+      </code>
+      <code value="J44.9" level="2">
+        <name>Chronic obstructive pulmonary disease, unspecified</name>
+      </code>
+    </children>
+  </code>
+  <code value="M25" level="1">
+    <name>Hemarthrosis, unspecified joint</name>
+    <children>
+      <code value="M25.5" level="2">
+        <name>Pain in unspecified joint</name>
+        <children>
+          <code value="M25.50" level="3">
+            <name>Pain in unspecified joint</name>
+          </code>
+          <code value="M25.511" level="4">
+            <name>Pain in right shoulder</name>
+          </code>
+          <code value="M25.512" level="4">
+            <name>Pain in left shoulder</name>
+          </code>
+          <code value="M25.519" level="4">
+            <name>Pain in unspecified shoulder</name>
+          </code>
+        </children>
+      </code>
+    </children>
+  </code>
+  <code value="R50" level="1">
+    <name>Drug induced fever</name>
+    <children>
+      <code value="R50.9" level="2">
+        <name>Fever, unspecified</name>
+      </code>
+    </children>
+  </code>
+  <code value="R51" level="1">
+    <name>Headache with orthostatic component, not elsewhere classified</name>
+    <children>
+      <code value="R51.0" level="2">
+        <name>Headache with orthostatic component, not elsewhere classified</name>
+      </code>
+      <code value="R51.9" level="2">
+        <name>Headache, unspecified</name>
+      </code>
+    </children>
+  </code>
+</icd10cm>

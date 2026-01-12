@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { FlattenedCode, CodeType } from '@/types/codes';
 import { CodeResultItem } from './CodeResultItem';
 import { ICD10TreeView } from './ICD10TreeView';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { FileSearch } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { FileSearch, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface CodeResultsListProps {
   codes: FlattenedCode[];
@@ -116,86 +117,112 @@ export function CodeResultsList({
     );
   }
 
+  // Collapsible state for each section
+  const [icdOpen, setIcdOpen] = useState(true);
+  const [hcpcsOpen, setHcpcsOpen] = useState(true);
+  const [ndcOpen, setNdcOpen] = useState(true);
+
   // All codes view - show all sections
   return (
     <ScrollArea className="h-[calc(100vh-380px)] min-h-[400px] scrollbar-thin">
       <div className="space-y-3 pr-4">
         {/* ICD-10-CM Section */}
-        <div>
-          <div className="mb-3 flex items-center gap-2">
+        <Collapsible open={icdOpen} onOpenChange={setIcdOpen}>
+          <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-lg bg-muted/50 px-3 py-2 hover:bg-muted transition-colors">
+            {icdOpen ? (
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            ) : (
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            )}
             <h3 className="text-sm font-semibold text-foreground">ICD-10-CM Codes</h3>
             <span className="rounded-full bg-code-badge-icd px-2 py-0.5 text-xs font-medium text-code-icd">
               Hierarchical
             </span>
-          </div>
-          <ICD10TreeView
-            selectedCodes={selectedCodes}
-            onToggle={onToggle}
-            searchQuery={searchQuery}
-            embedded
-          />
-        </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-2">
+            <ICD10TreeView
+              selectedCodes={selectedCodes}
+              onToggle={onToggle}
+              searchQuery={searchQuery}
+              embedded
+            />
+          </CollapsibleContent>
+        </Collapsible>
         
         {/* HCPCS Section */}
         {hcpcsCodes.length > 0 && (
-          <div>
-            <div className="mb-3 flex items-center gap-2">
+          <Collapsible open={hcpcsOpen} onOpenChange={setHcpcsOpen}>
+            <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-lg bg-muted/50 px-3 py-2 hover:bg-muted transition-colors">
+              {hcpcsOpen ? (
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              )}
               <h3 className="text-sm font-semibold text-foreground">HCPCS/CPT Codes</h3>
               <span className="rounded-full bg-code-badge-cpt px-2 py-0.5 text-xs font-medium text-code-cpt">
                 {hcpcsCodes.length} codes
               </span>
-            </div>
-            <div className="space-y-2">
-              {visibleHcpcsCodes.map((code) => (
-                <CodeResultItem
-                  key={`${code.type}-${code.code}`}
-                  code={code}
-                  isSelected={selectedCodes.has(code.code)}
-                  onToggle={() => onToggle(code.code)}
-                  searchQuery={searchQuery}
-                />
-              ))}
-              
-              {hasMoreHcpcs && (
-                <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
-                  <p className="text-sm text-muted-foreground">
-                    Showing {visibleHcpcsCodes.length} of {hcpcsCodes.length.toLocaleString()} results.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pt-2">
+              <div className="space-y-2">
+                {visibleHcpcsCodes.map((code) => (
+                  <CodeResultItem
+                    key={`${code.type}-${code.code}`}
+                    code={code}
+                    isSelected={selectedCodes.has(code.code)}
+                    onToggle={() => onToggle(code.code)}
+                    searchQuery={searchQuery}
+                  />
+                ))}
+                
+                {hasMoreHcpcs && (
+                  <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      Showing {visibleHcpcsCodes.length} of {hcpcsCodes.length.toLocaleString()} results.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         )}
 
         {/* NDC Section */}
         {ndcCodes.length > 0 && (
-          <div>
-            <div className="mb-3 flex items-center gap-2">
+          <Collapsible open={ndcOpen} onOpenChange={setNdcOpen}>
+            <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-lg bg-muted/50 px-3 py-2 hover:bg-muted transition-colors">
+              {ndcOpen ? (
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              )}
               <h3 className="text-sm font-semibold text-foreground">NDC Codes</h3>
               <span className="rounded-full bg-code-badge-ndc px-2 py-0.5 text-xs font-medium text-code-ndc">
                 {ndcCodes.length} codes
               </span>
-            </div>
-            <div className="space-y-2">
-              {visibleNdcCodes.map((code) => (
-                <CodeResultItem
-                  key={`${code.type}-${code.code}`}
-                  code={code}
-                  isSelected={selectedCodes.has(code.code)}
-                  onToggle={() => onToggle(code.code)}
-                  searchQuery={searchQuery}
-                />
-              ))}
-              
-              {hasMoreNdc && (
-                <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
-                  <p className="text-sm text-muted-foreground">
-                    Showing {visibleNdcCodes.length} of {ndcCodes.length.toLocaleString()} results.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pt-2">
+              <div className="space-y-2">
+                {visibleNdcCodes.map((code) => (
+                  <CodeResultItem
+                    key={`${code.type}-${code.code}`}
+                    code={code}
+                    isSelected={selectedCodes.has(code.code)}
+                    onToggle={() => onToggle(code.code)}
+                    searchQuery={searchQuery}
+                  />
+                ))}
+                
+                {hasMoreNdc && (
+                  <div className="rounded-lg border border-dashed bg-muted/30 p-4 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      Showing {visibleNdcCodes.length} of {ndcCodes.length.toLocaleString()} results.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         )}
       </div>
     </ScrollArea>

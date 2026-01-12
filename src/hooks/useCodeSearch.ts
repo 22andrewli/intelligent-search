@@ -4,6 +4,31 @@ import { hcpcsCodes } from '@/data/hcpcs_codes';
 import { ndcCodes } from '@/data/ndc_codes';
 import { FlattenedCode, ICD10Code, CodeType } from '@/types/codes';
 
+// Helper to get all descendant codes from a node
+function getAllDescendantCodes(codes: ICD10Code[], targetCode: string): string[] {
+  for (const code of codes) {
+    if (code.code === targetCode) {
+      // Found the target, collect all descendants
+      return collectAllCodes(code);
+    }
+    if (code.children) {
+      const found = getAllDescendantCodes(code.children, targetCode);
+      if (found.length > 0) return found;
+    }
+  }
+  return [];
+}
+
+function collectAllCodes(node: ICD10Code): string[] {
+  const codes = [node.code];
+  if (node.children) {
+    for (const child of node.children) {
+      codes.push(...collectAllCodes(child));
+    }
+  }
+  return codes;
+}
+
 function flattenICD10Codes(codes: ICD10Code[], parentCode?: string): FlattenedCode[] {
   const result: FlattenedCode[] = [];
   
@@ -72,15 +97,38 @@ export function useCodeSearch() {
     return codes;
   }, [allCodes, searchQuery, codeTypeFilter]);
 
-  // Selection handlers
+  // Selection handlers - when toggling a parent ICD-10 code, also toggle all children
   const toggleCode = useCallback((code: string) => {
     setSelectedCodes(prev => {
       const next = new Set(prev);
-      if (next.has(code)) {
-        next.delete(code);
+      
+      // Get all descendant codes for ICD-10 hierarchical selection
+      const allCodesToToggle = getAllDescendantCodes(icd10Data.icd10cm.codes as ICD10Code[], code);
+      
+      // If no descendants found (non-ICD10 or leaf node), just toggle the single code
+      if (allCodesToToggle.length === 0) {
+        if (next.has(code)) {
+          next.delete(code);
+        } else {
+          next.add(code);
+        }
       } else {
-        next.add(code);
+        // Check if the parent is currently selected
+        const isCurrentlySelected = next.has(code);
+        
+        if (isCurrentlySelected) {
+          // Deselect all
+          for (const c of allCodesToToggle) {
+            next.delete(c);
+          }
+        } else {
+          // Select all
+          for (const c of allCodesToToggle) {
+            next.add(c);
+          }
+        }
       }
+      
       return next;
     });
   }, []);

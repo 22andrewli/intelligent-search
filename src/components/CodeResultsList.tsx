@@ -21,6 +21,11 @@ export function CodeResultsList({
   searchQuery,
   codeTypeFilter,
 }: CodeResultsListProps) {
+  // Collapsible state for each section - must be declared before any returns
+  const [icdOpen, setIcdOpen] = useState(true);
+  const [hcpcsOpen, setHcpcsOpen] = useState(true);
+  const [ndcOpen, setNdcOpen] = useState(true);
+
   // For ICD-10 only view, show hierarchical tree
   const showHierarchy = codeTypeFilter === 'icd10cm';
   
@@ -117,10 +122,6 @@ export function CodeResultsList({
     );
   }
 
-  // Collapsible state for each section
-  const [icdOpen, setIcdOpen] = useState(true);
-  const [hcpcsOpen, setHcpcsOpen] = useState(true);
-  const [ndcOpen, setNdcOpen] = useState(true);
 
   // All codes view - show all sections
   return (

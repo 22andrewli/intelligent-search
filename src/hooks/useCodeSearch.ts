@@ -74,28 +74,38 @@ export function useCodeSearch() {
     return [...icd10Flattened, ...hcpcsFlattened, ...ndcFlattened];
   }, []);
 
+  // Filter codes by search query only (for counts that don't change with type filter)
+  const searchFilteredCodes = useMemo(() => {
+    if (!searchQuery.trim()) return allCodes;
+    
+    const query = searchQuery.toLowerCase().trim();
+    const queryTerms = query.split(/\s+/);
+    
+    return allCodes.filter(code => {
+      const searchableText = `${code.code} ${code.name} ${code.category || ''}`.toLowerCase();
+      return queryTerms.every(term => searchableText.includes(term));
+    });
+  }, [allCodes, searchQuery]);
+
+  // Counts by type (based on search only, not type filter)
+  const searchFilteredCounts = useMemo(() => ({
+    all: searchFilteredCodes.length,
+    icd10cm: searchFilteredCodes.filter(c => c.type === 'icd10cm').length,
+    hcpcs: searchFilteredCodes.filter(c => c.type === 'hcpcs').length,
+    ndc: searchFilteredCodes.filter(c => c.type === 'ndc').length,
+  }), [searchFilteredCodes]);
+
   // Filter codes based on search query and type filter
   const filteredCodes = useMemo(() => {
-    let codes = allCodes;
+    let codes = searchFilteredCodes;
     
     // Apply type filter
     if (codeTypeFilter !== 'all') {
       codes = codes.filter(c => c.type === codeTypeFilter);
     }
     
-    // Apply search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      const queryTerms = query.split(/\s+/);
-      
-      codes = codes.filter(code => {
-        const searchableText = `${code.code} ${code.name} ${code.category || ''}`.toLowerCase();
-        return queryTerms.every(term => searchableText.includes(term));
-      });
-    }
-    
     return codes;
-  }, [allCodes, searchQuery, codeTypeFilter]);
+  }, [searchFilteredCodes, codeTypeFilter]);
 
   // Selection handlers - when toggling a parent ICD-10 code, also toggle all children
   const toggleCode = useCallback((code: string) => {
@@ -163,6 +173,7 @@ export function useCodeSearch() {
     codeTypeFilter,
     setCodeTypeFilter,
     filteredCodes,
+    searchFilteredCounts,
     totalCodes: allCodes.length,
   };
 }

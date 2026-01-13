@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback } from 'react';
 import icd10Data from '@/data/icd10cm_hierarchy.json';
-import { hcpcsCodes } from '@/data/hcpcs_codes';
-import { ndcCodes } from '@/data/ndc_codes';
+import hcpcsCodesData from '@/data/hcpcs_codes.json';
+import ndcCodesData from '@/data/ndc_codes.json';
 import { FlattenedCode, ICD10Code, CodeType } from '@/types/codes';
 
 // Helper to get all descendant codes from a node
@@ -57,13 +57,13 @@ export function useCodeSearch() {
   // Flatten all codes
   const allCodes = useMemo<FlattenedCode[]>(() => {
     const icd10Flattened = flattenICD10Codes(icd10Data.icd10cm.codes);
-    const hcpcsFlattened: FlattenedCode[] = hcpcsCodes.map(c => ({
+    const hcpcsFlattened: FlattenedCode[] = hcpcsCodesData.map(c => ({
       code: c.code,
       name: c.name,
       type: 'hcpcs' as CodeType,
       category: c.category,
     }));
-    const ndcFlattened: FlattenedCode[] = ndcCodes.map(c => ({
+    const ndcFlattened: FlattenedCode[] = ndcCodesData.map(c => ({
       code: c.code,
       name: c.name,
       type: 'ndc' as CodeType,
@@ -109,7 +109,7 @@ export function useCodeSearch() {
 
   // Helper to get all HCPCS codes in a category
   function getHCPCSCodesInCategory(category: string): string[] {
-    return hcpcsCodes
+    return hcpcsCodesData
       .filter(c => c.category === category)
       .map(c => c.code);
   }

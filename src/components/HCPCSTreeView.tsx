@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { CodeTreeItem } from './CodeTreeItem';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { FileSearch } from 'lucide-react';
-import { hcpcsCodes } from '@/data/hcpcs_codes';
+import hcpcsCodesData from '@/data/hcpcs_codes.json';
 
 interface HCPCSCodeNode {
   code: string;
@@ -20,7 +20,7 @@ interface HCPCSTreeViewProps {
 }
 
 // Build hierarchy from flat HCPCS codes
-function buildHCPCSHierarchy(codes: typeof hcpcsCodes): HCPCSCodeNode[] {
+function buildHCPCSHierarchy(codes: typeof hcpcsCodesData): HCPCSCodeNode[] {
   // Group codes by category
   const categoryMap = new Map<string, { letter: string; children: HCPCSCodeNode[] }>();
   
@@ -105,7 +105,7 @@ export function HCPCSTreeView({
   searchQuery,
   embedded = false,
 }: HCPCSTreeViewProps) {
-  const hierarchy = useMemo(() => buildHCPCSHierarchy(hcpcsCodes), []);
+  const hierarchy = useMemo(() => buildHCPCSHierarchy(hcpcsCodesData), []);
   
   const filteredCodes = useMemo(() => {
     return filterTree(hierarchy, searchQuery);

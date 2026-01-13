@@ -1,4 +1,4 @@
-import { CheckSquare, Square, MinusSquare, Copy, Download } from 'lucide-react';
+import { CheckSquare, Square, MinusSquare, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { FlattenedCode } from '@/types/codes';
@@ -26,13 +26,6 @@ export function SelectionToolbar({
     } else {
       onSelectAll();
     }
-  };
-
-  const handleCopySelected = () => {
-    const selectedItems = filteredCodes.filter(c => selectedCodes.has(c.code));
-    const text = selectedItems.map(c => `${c.code}: ${c.name}`).join('\n');
-    navigator.clipboard.writeText(text);
-    toast.success(`Copied ${selectedItems.length} codes to clipboard`);
   };
 
   const handleExportSelected = () => {
@@ -64,16 +57,6 @@ export function SelectionToolbar({
     <div className="flex flex-wrap items-center gap-3">
       {selectedCodes.size > 0 && (
         <>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCopySelected}
-            className="h-9 gap-2 text-muted-foreground hover:text-foreground"
-          >
-            <Copy className="h-4 w-4" />
-            Copy
-          </Button>
-
           <Button
             variant="ghost"
             size="sm"

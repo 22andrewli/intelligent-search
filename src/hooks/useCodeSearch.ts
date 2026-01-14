@@ -201,5 +201,6 @@ export function useCodeSearch() {
     filteredCodes,
     searchFilteredCounts,
     totalCodes: allCodes.length,
+    allCodes,
   };
 }

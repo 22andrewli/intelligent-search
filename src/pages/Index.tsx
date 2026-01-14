@@ -57,8 +57,6 @@ const Index = () => {
                 isSomeSelected={isSomeSelected}
                 onSelectAll={selectAll}
                 onDeselectAll={deselectAll}
-                selectedCodes={selectedCodes}
-                filteredCodes={filteredCodes}
               />
             </div>
 

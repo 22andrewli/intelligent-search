@@ -1,5 +1,5 @@
-import { useMemo, useState, useCallback } from 'react';
-import { CheckSquare, Download } from 'lucide-react';
+import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
+import { CheckSquare, Download, Upload } from 'lucide-react';
 import { DndContext, DragEndEvent, DragOverEvent, pointerWithin, PointerSensor, useSensor, useSensors, rectIntersection } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -8,12 +8,16 @@ import { Button } from '@/components/ui/button';
 import { FlattenedCode } from '@/types/codes';
 import { toast } from 'sonner';
 import { DroppableGroup } from './DroppableGroup';
+import { ImportedCodeGroups } from '@/hooks/useCodeSearch';
 
 interface SelectedCodesPanelProps {
   selectedCodes: Set<string>;
   allCodes: FlattenedCode[];
   onRemove: (code: string) => void;
   onClearAll: () => void;
+  importedGroups: ImportedCodeGroups | null;
+  onClearImportedGroups: () => void;
+  onImportCSV: (codes: Array<{ code: string; type: string; group: string }>) => { matchedCodes: string[]; unmatchedCodes: string[] };
 }
 
 type GroupId = 'group1' | 'group2' | 'group3';
@@ -29,12 +33,24 @@ export function SelectedCodesPanel({
   allCodes,
   onRemove,
   onClearAll,
+  importedGroups,
+  onClearImportedGroups,
+  onImportCSV,
 }: SelectedCodesPanelProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [groups, setGroups] = useState<GroupState>({
     group1: [],
     group2: [],
     group3: [],
   });
+
+  // Apply imported groups when they change
+  useEffect(() => {
+    if (importedGroups) {
+      setGroups(importedGroups);
+      onClearImportedGroups();
+    }
+  }, [importedGroups, onClearImportedGroups]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -204,9 +220,133 @@ export function SelectedCodesPanel({
     toast.success(`Exported ${allItems.length} codes`);
   };
 
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      if (!text) {
+        toast.error('Failed to read file');
+        return;
+      }
+
+      try {
+        const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+        if (lines.length < 2) {
+          toast.error('CSV file must have a header row and at least one data row');
+          return;
+        }
+
+        // Parse header row
+        const headerLine = lines[0];
+        const headers = parseCSVLine(headerLine).map(h => h.toLowerCase().trim());
+        
+        // Find required column indices
+        const codeIndex = headers.findIndex(h => h === 'code');
+        const typeIndex = headers.findIndex(h => h === 'type');
+        const groupIndex = headers.findIndex(h => h === 'group');
+
+        if (codeIndex === -1) {
+          toast.error('CSV must have a "code" column');
+          return;
+        }
+        if (typeIndex === -1) {
+          toast.error('CSV must have a "type" column');
+          return;
+        }
+        if (groupIndex === -1) {
+          toast.error('CSV must have a "group" column');
+          return;
+        }
+
+        // Parse data rows
+        const codes: Array<{ code: string; type: string; group: string }> = [];
+        for (let i = 1; i < lines.length; i++) {
+          const values = parseCSVLine(lines[i]);
+          if (values.length > Math.max(codeIndex, typeIndex, groupIndex)) {
+            codes.push({
+              code: values[codeIndex],
+              type: values[typeIndex],
+              group: values[groupIndex],
+            });
+          }
+        }
+
+        if (codes.length === 0) {
+          toast.error('No valid data rows found in CSV');
+          return;
+        }
+
+        const { matchedCodes, unmatchedCodes } = onImportCSV(codes);
+
+        if (matchedCodes.length === 0) {
+          toast.error('No matching codes found in the database');
+        } else if (unmatchedCodes.length > 0) {
+          toast.success(`Imported ${matchedCodes.length} codes. ${unmatchedCodes.length} codes not found.`);
+        } else {
+          toast.success(`Imported ${matchedCodes.length} codes`);
+        }
+      } catch (error) {
+        toast.error('Failed to parse CSV file');
+        console.error('CSV parse error:', error);
+      }
+    };
+
+    reader.readAsText(file);
+    // Reset input so the same file can be selected again
+    event.target.value = '';
+  };
+
+  // Parse a CSV line, handling quoted values
+  const parseCSVLine = (line: string): string[] => {
+    const result: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      
+      if (char === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          // Escaped quote
+          current += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    
+    result.push(current.trim());
+    return result;
+  };
+
+  // Hidden file input - rendered at top level to persist across renders
+  const fileInput = (
+    <input
+      ref={fileInputRef}
+      type="file"
+      accept=".csv"
+      onChange={handleFileChange}
+      className="hidden"
+    />
+  );
+
   if (selectedCodes.size === 0) {
     return (
       <Card className="h-full flex flex-col">
+        {fileInput}
         <div className="border-b p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -222,8 +362,17 @@ export function SelectedCodesPanel({
               No codes selected
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Select codes from the list to see them here
+              Select codes from the list or upload a CSV
             </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleUploadClick}
+              className="mt-4 gap-1.5"
+            >
+              <Upload className="h-3.5 w-3.5" />
+              Upload CSV
+            </Button>
           </div>
         </div>
       </Card>
@@ -232,6 +381,7 @@ export function SelectedCodesPanel({
 
   return (
     <Card className="h-full flex flex-col">
+      {fileInput}
       <div className="border-b p-4">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
@@ -242,7 +392,7 @@ export function SelectedCodesPanel({
             {selectedCodes.size}
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button
             variant="ghost"
             size="sm"
@@ -250,6 +400,15 @@ export function SelectedCodesPanel({
             className="h-8 text-xs text-muted-foreground hover:text-foreground"
           >
             Clear All
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleUploadClick}
+            className="h-8 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <Upload className="h-3.5 w-3.5" />
+            Upload CSV
           </Button>
           <Button
             variant="ghost"

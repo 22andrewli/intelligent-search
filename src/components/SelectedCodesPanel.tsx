@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { CheckSquare, Download } from 'lucide-react';
-import { DndContext, DragEndEvent, DragOverEvent, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragOverEvent, pointerWithin, PointerSensor, useSensor, useSensors, rectIntersection } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
@@ -267,7 +267,7 @@ export function SelectedCodesPanel({
         <div className="p-4 space-y-6">
           <DndContext
             sensors={sensors}
-            collisionDetection={closestCenter}
+            collisionDetection={pointerWithin}
             onDragEnd={handleDragEnd}
             onDragOver={handleDragOver}
           >

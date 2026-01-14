@@ -23,6 +23,9 @@ const Index = () => {
     searchFilteredCounts,
     totalCodes,
     allCodes,
+    importCodesFromCSV,
+    importedGroups,
+    clearImportedGroups,
   } = useCodeSearch();
 
   return (
@@ -77,6 +80,9 @@ const Index = () => {
               allCodes={allCodes}
               onRemove={removeCode}
               onClearAll={deselectAll}
+              importedGroups={importedGroups}
+              onClearImportedGroups={clearImportedGroups}
+              onImportCSV={importCodesFromCSV}
             />
           </div>
         </div>

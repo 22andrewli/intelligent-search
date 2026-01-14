@@ -49,10 +49,17 @@ function flattenICD10Codes(codes: ICD10Code[], parentCode?: string): FlattenedCo
   return result;
 }
 
+export interface ImportedCodeGroups {
+  group1: string[];
+  group2: string[];
+  group3: string[];
+}
+
 export function useCodeSearch() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
   const [codeTypeFilter, setCodeTypeFilter] = useState<CodeType | 'all'>('all');
+  const [importedGroups, setImportedGroups] = useState<ImportedCodeGroups | null>(null);
 
   // Flatten all codes
   const allCodes = useMemo<FlattenedCode[]>(() => {
@@ -195,6 +202,51 @@ export function useCodeSearch() {
     return filteredCodes.some(c => selectedCodes.has(c.code)) && !isAllSelected;
   }, [filteredCodes, selectedCodes, isAllSelected]);
 
+  // Import codes from CSV with group assignments
+  const importCodesFromCSV = useCallback((codes: Array<{ code: string; type: string; group: string }>) => {
+    const codeSet = new Set<string>();
+    const groups: ImportedCodeGroups = { group1: [], group2: [], group3: [] };
+    
+    // Create a lookup of all valid codes
+    const validCodes = new Set(allCodes.map(c => c.code));
+    
+    const matchedCodes: string[] = [];
+    const unmatchedCodes: string[] = [];
+    
+    for (const item of codes) {
+      const codeStr = item.code.trim();
+      
+      if (validCodes.has(codeStr)) {
+        codeSet.add(codeStr);
+        matchedCodes.push(codeStr);
+        
+        // Assign to group based on CSV value
+        const groupValue = item.group.trim().toLowerCase();
+        if (groupValue === 'group 1' || groupValue === 'group1' || groupValue === '1') {
+          groups.group1.push(codeStr);
+        } else if (groupValue === 'group 2' || groupValue === 'group2' || groupValue === '2') {
+          groups.group2.push(codeStr);
+        } else if (groupValue === 'group 3' || groupValue === 'group3' || groupValue === '3') {
+          groups.group3.push(codeStr);
+        } else {
+          // Default to group 1 if unrecognized
+          groups.group1.push(codeStr);
+        }
+      } else {
+        unmatchedCodes.push(codeStr);
+      }
+    }
+    
+    setSelectedCodes(codeSet);
+    setImportedGroups(groups);
+    
+    return { matchedCodes, unmatchedCodes };
+  }, [allCodes]);
+
+  const clearImportedGroups = useCallback(() => {
+    setImportedGroups(null);
+  }, []);
+
   return {
     searchQuery,
     setSearchQuery,
@@ -211,5 +263,8 @@ export function useCodeSearch() {
     searchFilteredCounts,
     totalCodes: allCodes.length,
     allCodes,
+    importCodesFromCSV,
+    importedGroups,
+    clearImportedGroups,
   };
 }

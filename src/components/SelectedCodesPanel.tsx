@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
-import { X, CheckSquare } from 'lucide-react';
+import { X, CheckSquare, Download } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FlattenedCode } from '@/types/codes';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface SelectedCodesPanelProps {
   selectedCodes: Set<string>;
@@ -106,6 +107,24 @@ export function SelectedCodesPanel({
     );
   }
 
+  const handleExportCSV = () => {
+    const csv = [
+      'Code,Description,Type,Category',
+      ...selectedItems.map(c => 
+        `"${c.code}","${c.name}","${c.type}","${c.category || ''}"`
+      )
+    ].join('\n');
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'selected_codes.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${selectedItems.length} codes`);
+  };
+
   return (
     <Card className="h-full flex flex-col">
       <div className="border-b p-4">
@@ -118,14 +137,25 @@ export function SelectedCodesPanel({
             {selectedCodes.size}
           </span>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onClearAll}
-          className="h-8 text-xs text-muted-foreground hover:text-foreground"
-        >
-          Clear All
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClearAll}
+            className="h-8 text-xs text-muted-foreground hover:text-foreground"
+          >
+            Clear All
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleExportCSV}
+            className="h-8 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <Download className="h-3.5 w-3.5" />
+            Export CSV
+          </Button>
+        </div>
       </div>
 
       <ScrollArea className="flex-1">

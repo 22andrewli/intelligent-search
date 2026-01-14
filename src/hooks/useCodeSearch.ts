@@ -178,6 +178,14 @@ export function useCodeSearch() {
     setSelectedCodes(new Set());
   }, []);
 
+  const removeCode = useCallback((code: string) => {
+    setSelectedCodes(prev => {
+      const next = new Set(prev);
+      next.delete(code);
+      return next;
+    });
+  }, []);
+
   const isAllSelected = useMemo(() => {
     if (filteredCodes.length === 0) return false;
     return filteredCodes.every(c => selectedCodes.has(c.code));
@@ -192,6 +200,7 @@ export function useCodeSearch() {
     setSearchQuery,
     selectedCodes,
     toggleCode,
+    removeCode,
     selectAll,
     deselectAll,
     isAllSelected,

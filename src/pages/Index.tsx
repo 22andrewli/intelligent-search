@@ -12,6 +12,7 @@ const Index = () => {
     setSearchQuery,
     selectedCodes,
     toggleCode,
+    removeCode,
     selectAll,
     deselectAll,
     isAllSelected,
@@ -76,7 +77,7 @@ const Index = () => {
             <SelectedCodesPanel
               selectedCodes={selectedCodes}
               allCodes={allCodes}
-              onRemove={toggleCode}
+              onRemove={removeCode}
               onClearAll={deselectAll}
             />
           </div>

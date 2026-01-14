@@ -63,6 +63,23 @@ export function SelectedCodesPanel({
       });
   }, [selectedCodes, allCodes]);
 
+  // Group by type - must be called before early return to maintain hook order
+  const groupedByType = useMemo(() => {
+    const groups: Record<string, FlattenedCode[]> = {
+      icd10cm: [],
+      hcpcs: [],
+      ndc: [],
+    };
+    
+    selectedItems.forEach(item => {
+      if (groups[item.type]) {
+        groups[item.type].push(item);
+      }
+    });
+    
+    return groups;
+  }, [selectedItems]);
+
   if (selectedCodes.size === 0) {
     return (
       <Card className="h-full flex flex-col">
@@ -88,23 +105,6 @@ export function SelectedCodesPanel({
       </Card>
     );
   }
-
-  // Group by type
-  const groupedByType = useMemo(() => {
-    const groups: Record<string, FlattenedCode[]> = {
-      icd10cm: [],
-      hcpcs: [],
-      ndc: [],
-    };
-    
-    selectedItems.forEach(item => {
-      if (groups[item.type]) {
-        groups[item.type].push(item);
-      }
-    });
-    
-    return groups;
-  }, [selectedItems]);
 
   return (
     <Card className="h-full flex flex-col">

@@ -222,15 +222,14 @@ export function useCodeSearch() {
         codeSet.add(codeStr);
         matchedCodes.push(codeStr);
 
-        // Assign to group based on code_group value
-        const groupValue = row.code_group.trim().toLowerCase();
-        if (groupValue === 'group 1' || groupValue === 'group1' || groupValue === '1') {
-          groups.group1.push(codeStr);
-        } else if (groupValue === 'group 2' || groupValue === 'group2' || groupValue === '2') {
+        // Assign to group based on code_group value (only "1", "2", or "3")
+        const groupValue = row.code_group.trim();
+        if (groupValue === '2') {
           groups.group2.push(codeStr);
-        } else if (groupValue === 'group 3' || groupValue === 'group3' || groupValue === '3') {
+        } else if (groupValue === '3') {
           groups.group3.push(codeStr);
         } else {
+          // "1" or any other value defaults to group 1
           groups.group1.push(codeStr);
         }
       } else {

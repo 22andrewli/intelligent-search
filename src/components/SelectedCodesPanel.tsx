@@ -216,9 +216,9 @@ export function SelectedCodesPanel({
   const handleExportCSV = () => {
     const header = 'code_group,code_category,code_type,code_value,code_desc';
     const rows = [
-      ...groupedCodes.group1.map(c => [ 'Group 1', c.category ?? '', formatTypeForExport(c.type), c.code, c.name ].map(escapeCsv).join(',')),
-      ...groupedCodes.group2.map(c => [ 'Group 2', c.category ?? '', formatTypeForExport(c.type), c.code, c.name ].map(escapeCsv).join(',')),
-      ...groupedCodes.group3.map(c => [ 'Group 3', c.category ?? '', formatTypeForExport(c.type), c.code, c.name ].map(escapeCsv).join(',')),
+      ...groupedCodes.group1.map(c => [ '1', c.category ?? '', formatTypeForExport(c.type), c.code, c.name ].map(escapeCsv).join(',')),
+      ...groupedCodes.group2.map(c => [ '2', c.category ?? '', formatTypeForExport(c.type), c.code, c.name ].map(escapeCsv).join(',')),
+      ...groupedCodes.group3.map(c => [ '3', c.category ?? '', formatTypeForExport(c.type), c.code, c.name ].map(escapeCsv).join(',')),
     ];
     const csv = [header, ...rows].join('\n');
     
@@ -234,6 +234,19 @@ export function SelectedCodesPanel({
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleDownloadTemplate = () => {
+    const header = 'code_group,code_category,code_type,code_value,code_desc';
+    const csv = header + '\n';
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'selected_codes_template.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Template downloaded');
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -387,15 +400,26 @@ export function SelectedCodesPanel({
             <p className="text-xs text-muted-foreground mt-1">
               Select codes from the list or upload a CSV
             </p>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleUploadClick}
-              className="mt-4 gap-1.5"
-            >
-              <Upload className="h-3.5 w-3.5" />
-              Upload CSV
-            </Button>
+            <div className="mt-4 flex gap-2 justify-center flex-wrap">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleUploadClick}
+                className="gap-1.5"
+              >
+                <Upload className="h-3.5 w-3.5" />
+                Upload CSV
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDownloadTemplate}
+                className="gap-1.5"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Download Template
+              </Button>
+            </div>
           </div>
         </div>
       </Card>
@@ -440,7 +464,7 @@ export function SelectedCodesPanel({
             className="h-8 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
           >
             <Download className="h-3.5 w-3.5" />
-            Export CSV
+            Download CSV
           </Button>
         </div>
       </div>

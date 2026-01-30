@@ -55,10 +55,10 @@ export interface ImportedCodeGroups {
   group3: string[];
 }
 
-/** Normalize CSV code_type (e.g. "ICD10", "ICD10CM") to our CodeType. */
+/** Normalize CSV code_type (e.g. "ICD10", "ICD10CM", "ICD10DX") to our CodeType. */
 function normalizeCodeTypeFromCSV(value: string): CodeType | null {
   const v = value.trim().toUpperCase();
-  if (v === 'ICD10' || v === 'ICD10CM') return 'icd10cm';
+  if (v === 'ICD10' || v === 'ICD10CM' || v === 'ICD10DX') return 'icd10cm';
   if (v === 'HCPCS') return 'hcpcs';
   if (v === 'NDC') return 'ndc';
   return null;

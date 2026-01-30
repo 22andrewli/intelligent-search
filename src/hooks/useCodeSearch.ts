@@ -55,6 +55,96 @@ export interface ImportedCodeGroups {
   group3: string[];
 }
 
+/** Normalize CSV code_type (e.g. "ICD10", "ICD10CM") to our CodeType. */
+function normalizeCodeTypeFromCSV(value: string): CodeType | null {
+  const v = value.trim().toUpperCase();
+  if (v === 'ICD10' || v === 'ICD10CM') return 'icd10cm';
+  if (v === 'HCPCS') return 'hcpcs';
+  if (v === 'NDC') return 'ndc';
+  return null;
+}
+
+/**
+ * Normalize ICD10 code for matching: add period after 3rd character if missing.
+ * Data uses format like A00.0, A01.00. Uploaded codes may be A000, A0100.
+ */
+function normalizeICD10Code(value: string): string {
+  const s = value.trim();
+  if (s.includes('.')) return s; // already formatted
+  // ICD10: 1 letter + 2 digits + [optional period] + up to 4 more chars
+  if (s.length >= 4 && /^[A-Z]\d{2}/i.test(s)) {
+    return s.slice(0, 3) + '.' + s.slice(3);
+  }
+  return s;
+}
+
+/** Normalize HCPCS for matching: remove all spaces (e.g. "H 0001" -> "H0001"). */
+function normalizeHCPCSCode(value: string): string {
+  return value.trim().replace(/\s+/g, '');
+}
+
+/**
+ * Convert NDC11 digits to NDC10 by removing the padded leading zero per FDA guide:
+ * 4-4-2 (10) -> 5-4-2 (11): zero in first segment; 5-3-2 -> zero in second; 5-4-1 -> zero in third.
+ * Input: 11-digit string. Output: 10-digit string.
+ */
+function ndc11ToNdc10Digits(digits11: string): string {
+  if (digits11.length !== 11) return digits11;
+  const s1 = digits11.slice(0, 5);
+  const s2 = digits11.slice(5, 9);
+  const s3 = digits11.slice(9, 11);
+  if (s1[0] === '0') return s1.slice(1) + s2 + s3;       // was 4-4-2
+  if (s2[0] === '0') return s1 + s2.slice(1) + s3;       // was 5-3-2
+  if (s3[0] === '0') return s1 + s2 + s3.slice(1);       // was 5-4-1
+  return digits11.slice(0, 10); // fallback: drop last digit
+}
+
+/** Resolve uploaded code_value to canonical code in our data. */
+function resolveCodeForMatch(
+  codeValue: string,
+  rowType: CodeType,
+  codesByType: Map<CodeType, Set<string>>,
+  icd10UnformattedToCanonical: Map<string, string>,
+  ndcDigitsToCanonical: Map<string, string>
+): string | null {
+  const s = codeValue.trim();
+  if (!s) return null;
+  const codes = codesByType.get(rowType);
+  if (!codes) return null;
+
+  if (rowType === 'icd10cm') {
+    if (codes.has(s)) return s;
+    const withPeriod = normalizeICD10Code(s);
+    if (codes.has(withPeriod)) return withPeriod;
+    const fromUnformatted = icd10UnformattedToCanonical.get(s.replace('.', ''));
+    if (fromUnformatted) return fromUnformatted;
+    return null;
+  }
+
+  if (rowType === 'hcpcs') {
+    if (codes.has(s)) return s;
+    const noSpaces = normalizeHCPCSCode(s);
+    return codes.has(noSpaces) ? noSpaces : null;
+  }
+
+  if (rowType === 'ndc') {
+    if (codes.has(s)) return s;
+    const digitsOnly = s.replace(/\D/g, '');
+    if (digitsOnly.length === 11) {
+      const tenDigits = ndc11ToNdc10Digits(digitsOnly);
+      const canonical = ndcDigitsToCanonical.get(tenDigits);
+      if (canonical) return canonical;
+    }
+    if (digitsOnly.length === 10) {
+      const canonical = ndcDigitsToCanonical.get(digitsOnly);
+      if (canonical) return canonical;
+    }
+    return null;
+  }
+
+  return codes.has(s) ? s : null;
+}
+
 export function useCodeSearch() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
@@ -204,33 +294,72 @@ export function useCodeSearch() {
 
   // Import codes from CSV with group assignments
   // CSV columns: code_group, code_category (optional), code_type, code_value, code_desc (optional)
+  // Matches only within the row's code_type; handles ICD10 with or without period.
   const importCodesFromCSV = useCallback((codes: ImportedCSVRow[]) => {
     const codeSet = new Set<string>();
     const groups: ImportedCodeGroups = { group1: [], group2: [], group3: [] };
 
-    // Create a lookup of all valid codes
-    const validCodes = new Set(allCodes.map(c => c.code));
+    // Build lookups by code type (only search within that category)
+    const codesByType = new Map<CodeType, Set<string>>();
+    for (const c of allCodes) {
+      if (!codesByType.has(c.type)) codesByType.set(c.type, new Set());
+      codesByType.get(c.type)!.add(c.code);
+    }
+
+    // ICD10: map unformatted (no period) -> canonical (with period) for flexible matching
+    const icd10UnformattedToCanonical = new Map<string, string>();
+    const icd10Codes = codesByType.get('icd10cm');
+    if (icd10Codes) {
+      icd10Codes.forEach(canonical => {
+        const unformatted = canonical.replace('.', '');
+        if (unformatted !== canonical) icd10UnformattedToCanonical.set(unformatted, canonical);
+      });
+    }
+
+    // NDC: map 10-digit string (no dashes) -> canonical (with dashes) for flexible matching
+    const ndcDigitsToCanonical = new Map<string, string>();
+    const ndcCodes = codesByType.get('ndc');
+    if (ndcCodes) {
+      ndcCodes.forEach(canonical => {
+        const digitsOnly = canonical.replace(/\D/g, '');
+        if (digitsOnly.length === 10) ndcDigitsToCanonical.set(digitsOnly, canonical);
+      });
+    }
 
     const matchedCodes: string[] = [];
     const unmatchedCodes: string[] = [];
+    const codeTypesSeen = new Set<CodeType>();
 
     for (const row of codes) {
       const codeStr = row.code_value.trim();
       if (!codeStr) continue;
 
-      if (validCodes.has(codeStr)) {
-        codeSet.add(codeStr);
-        matchedCodes.push(codeStr);
+      const rowType = normalizeCodeTypeFromCSV(row.code_type);
+      if (rowType === null) {
+        unmatchedCodes.push(codeStr);
+        continue;
+      }
+      codeTypesSeen.add(rowType);
 
-        // Assign to group based on code_group value (only "1", "2", or "3")
+      const canonicalCode = resolveCodeForMatch(
+        codeStr,
+        rowType,
+        codesByType,
+        icd10UnformattedToCanonical,
+        ndcDigitsToCanonical
+      );
+
+      if (canonicalCode !== null) {
+        codeSet.add(canonicalCode);
+        matchedCodes.push(canonicalCode);
+
         const groupValue = row.code_group.trim();
         if (groupValue === '2') {
-          groups.group2.push(codeStr);
+          groups.group2.push(canonicalCode);
         } else if (groupValue === '3') {
-          groups.group3.push(codeStr);
+          groups.group3.push(canonicalCode);
         } else {
-          // "1" or any other value defaults to group 1
-          groups.group1.push(codeStr);
+          groups.group1.push(canonicalCode);
         }
       } else {
         unmatchedCodes.push(codeStr);
@@ -239,6 +368,13 @@ export function useCodeSearch() {
 
     setSelectedCodes(codeSet);
     setImportedGroups(groups);
+
+    // When upload has a single code_type, filter the list to that category
+    if (codeTypesSeen.size === 1) {
+      setCodeTypeFilter([...codeTypesSeen][0]);
+    } else {
+      setCodeTypeFilter('all');
+    }
 
     return { matchedCodes, unmatchedCodes };
   }, [allCodes]);

@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 import icd10Data from '@/data/icd10cm_hierarchy.json';
 import hcpcsCodesData from '@/data/hcpcs_codes.json';
 import ndcCodesData from '@/data/ndc_codes.json';
-import { FlattenedCode, ICD10Code, CodeType } from '@/types/codes';
+import { FlattenedCode, ICD10Code, CodeType, ImportedCSVRow } from '@/types/codes';
 
 // Helper to get all descendant codes from a node
 function getAllDescendantCodes(codes: ICD10Code[], targetCode: string): string[] {
@@ -203,25 +203,27 @@ export function useCodeSearch() {
   }, [filteredCodes, selectedCodes, isAllSelected]);
 
   // Import codes from CSV with group assignments
-  const importCodesFromCSV = useCallback((codes: Array<{ code: string; type: string; group: string }>) => {
+  // CSV columns: code_group, code_category (optional), code_type, code_value, code_desc (optional)
+  const importCodesFromCSV = useCallback((codes: ImportedCSVRow[]) => {
     const codeSet = new Set<string>();
     const groups: ImportedCodeGroups = { group1: [], group2: [], group3: [] };
-    
+
     // Create a lookup of all valid codes
     const validCodes = new Set(allCodes.map(c => c.code));
-    
+
     const matchedCodes: string[] = [];
     const unmatchedCodes: string[] = [];
-    
-    for (const item of codes) {
-      const codeStr = item.code.trim();
-      
+
+    for (const row of codes) {
+      const codeStr = row.code_value.trim();
+      if (!codeStr) continue;
+
       if (validCodes.has(codeStr)) {
         codeSet.add(codeStr);
         matchedCodes.push(codeStr);
-        
-        // Assign to group based on CSV value
-        const groupValue = item.group.trim().toLowerCase();
+
+        // Assign to group based on code_group value
+        const groupValue = row.code_group.trim().toLowerCase();
         if (groupValue === 'group 1' || groupValue === 'group1' || groupValue === '1') {
           groups.group1.push(codeStr);
         } else if (groupValue === 'group 2' || groupValue === 'group2' || groupValue === '2') {
@@ -229,17 +231,16 @@ export function useCodeSearch() {
         } else if (groupValue === 'group 3' || groupValue === 'group3' || groupValue === '3') {
           groups.group3.push(codeStr);
         } else {
-          // Default to group 1 if unrecognized
           groups.group1.push(codeStr);
         }
       } else {
         unmatchedCodes.push(codeStr);
       }
     }
-    
+
     setSelectedCodes(codeSet);
     setImportedGroups(groups);
-    
+
     return { matchedCodes, unmatchedCodes };
   }, [allCodes]);
 

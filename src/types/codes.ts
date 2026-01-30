@@ -30,3 +30,12 @@ export interface FlattenedCode {
   manufacturer?: string;
   packageSize?: string;
 }
+
+/** Accepted CSV upload row. Columns (in order): code_group, code_category, code_type, code_value, code_desc (optional). */
+export interface ImportedCSVRow {
+  code_group: string;
+  code_category?: string;
+  code_type: string; // NDC, ICD10, or HCPCS
+  code_value: string;
+  code_desc?: string;
+}
